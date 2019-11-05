@@ -43,7 +43,9 @@ namespace util {
 
     // --------------------------------------------------------------------------
     using time_point = std::chrono::system_clock::time_point;
+#if (__cplusplus >= 201700L)
     using file_time_point = sys_fs::file_time_type;
+#endif
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
@@ -64,11 +66,13 @@ namespace util {
                                          const char* time_delem = ":",
                                          bool add_millis = false);
 
+#if (__cplusplus >= 201700L)
     UTIL_EXPORT std::string format_time (file_time_point const& tp,
                                          const char* year_delem = "-",
                                          const char* separator = " ",
                                          const char* time_delem = ":",
                                          bool add_millis = false);
+#endif
 
     UTIL_EXPORT time_point parse_time (const std::string& s);
     UTIL_EXPORT time_point parse_time (std::istream& in);
