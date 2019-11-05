@@ -55,20 +55,10 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
-    std::string format_time (time_point const& tp,
-                             const char* date_delem,
-                             const char* sparator,
-                             const char* time_delem,
-                             bool add_millis) {
-      std::ostringstream strm;
-      format_time(strm, tp, date_delem, sparator, time_delem, add_millis);
-      return strm.str();
-    }
-
     UTIL_EXPORT std::ostream& format_time (std::ostream& out,
                                            time_point const& tp,
                                            const char* date_delem,
-                                           const char* sparator,
+                                           const char* separator,
                                            const char* time_delem,
                                            bool add_millis) {
       std::time_t now = std::chrono::system_clock::to_time_t(tp);
@@ -84,7 +74,7 @@ namespace util {
       out << std::setfill('0')
           << (t.tm_year + 1900) << date_delem
           << std::setw(2) << (t.tm_mon + 1) << date_delem
-          << std::setw(2) << t.tm_mday << sparator
+          << std::setw(2) << t.tm_mday << separator
           << std::setw(2) << t.tm_hour << time_delem
           << std::setw(2) << t.tm_min << time_delem
           << std::setw(2) << t.tm_sec;
@@ -96,6 +86,26 @@ namespace util {
       }
 
       return out;
+    }
+
+    std::string format_time (time_point const& tp,
+                             const char* date_delem,
+                             const char* separator,
+                             const char* time_delem,
+                             bool add_millis) {
+      std::ostringstream strm;
+      format_time(strm, tp, date_delem, separator, time_delem, add_millis);
+      return strm.str();
+    }
+
+    std::string format_time (file_time_point const& ftp,
+                             const char* date_delem,
+                             const char* separator,
+                             const char* time_delem,
+                             bool add_millis) {
+      std::time_t now = file_time_point::clock::to_time_t(ftp);
+      auto tp = std::chrono::system_clock::from_time_t(now);
+      return format_time(tp, date_delem, separator, time_delem, add_millis);
     }
 
     time_point parse_time (const std::string& s) {
@@ -164,7 +174,7 @@ namespace util {
     std::ostream& format_duration_mt (std::ostream& out,
                                       duration const& d,
                                       int hours_per_mt,
-                                      const char* sparator,
+                                      const char* separator,
                                       const char* time_delem,
                                       bool add_millis) {
       ostream_resetter r(out);
@@ -177,7 +187,7 @@ namespace util {
       t = (t - min) / 60;
       auto hours = t % hours_per_mt;
       auto days = (t - hours) / hours_per_mt;
-      out << days << sparator << std::setfill('0')
+      out << days << separator << std::setfill('0')
           << std::setw(2) << hours << time_delem
           << std::setw(2) << min << time_delem
           << std::setw(2) << secs;
@@ -216,19 +226,19 @@ namespace util {
     // --------------------------------------------------------------------------
     std::ostream& format_duration (std::ostream& out,
                                    duration const& d,
-                                   const char* sparator,
+                                   const char* separator,
                                    const char* time_delem,
                                    bool add_millis) {
-      return format_duration_mt(out, d, 24, sparator, time_delem, add_millis);
+      return format_duration_mt(out, d, 24, separator, time_delem, add_millis);
     }
 
     // --------------------------------------------------------------------------
     std::string format_duration (duration const& d,
-                                 const char* sparator,
+                                 const char* separator,
                                  const char* time_delem,
                                  bool add_millis) {
       std::ostringstream strm;
-      format_duration(strm, d, sparator, time_delem, add_millis);
+      format_duration(strm, d, separator, time_delem, add_millis);
       return strm.str();
     }
 
