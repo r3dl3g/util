@@ -31,6 +31,7 @@
 // Library includes
 //
 #include <util-export.h>
+#include "sys_fs.h"
 
 
 /**
@@ -42,6 +43,7 @@ namespace util {
 
     // --------------------------------------------------------------------------
     using time_point = std::chrono::system_clock::time_point;
+    using file_time_point = sys_fs::file_time_type;
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
@@ -52,13 +54,19 @@ namespace util {
     UTIL_EXPORT std::ostream& format_time (std::ostream&,
                                            time_point const& tp,
                                            const char* year_delem = "-",
-                                           const char* sparator = " ",
+                                           const char* separator = " ",
                                            const char* time_delem = ":",
                                            bool add_millis = false);
 
     UTIL_EXPORT std::string format_time (time_point const& tp,
                                          const char* year_delem = "-",
-                                         const char* sparator = " ",
+                                         const char* separator = " ",
+                                         const char* time_delem = ":",
+                                         bool add_millis = false);
+
+    UTIL_EXPORT std::string format_time (file_time_point const& tp,
+                                         const char* year_delem = "-",
+                                         const char* separator = " ",
                                          const char* time_delem = ":",
                                          bool add_millis = false);
 
@@ -71,14 +79,14 @@ namespace util {
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_duration (std::ostream&,
                                                duration const& d,
-                                               const char* sparator = " ",
+                                               const char* separator = " ",
                                                const char* time_delem = ":",
                                                bool add_millis = false);
 
     UTIL_EXPORT std::ostream& format_duration_mt (std::ostream& out,
                                                   duration const& d,
                                                   int hours_per_mt = 8,
-                                                  const char* sparator = " ",
+                                                  const char* separator = " ",
                                                   const char* time_delem = ":",
                                                   bool add_millis = false);
 
@@ -88,7 +96,7 @@ namespace util {
                                                       bool add_millis = false);
 
     UTIL_EXPORT std::string format_duration (duration const& d,
-                                             const char* sparator = " ",
+                                             const char* separator = " ",
                                              const char* time_delem = ":",
                                              bool add_millis = false);
 
