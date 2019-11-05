@@ -98,6 +98,7 @@ namespace util {
       return strm.str();
     }
 
+#if (__cplusplus >= 201700L)
     std::string format_time (file_time_point const& ftp,
                              const char* date_delem,
                              const char* separator,
@@ -107,6 +108,7 @@ namespace util {
       auto tp = std::chrono::system_clock::from_time_t(now);
       return format_time(tp, date_delem, separator, time_delem, add_millis);
     }
+#endif
 
     time_point parse_time (const std::string& s) {
       std::istringstream strm(s);
