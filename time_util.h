@@ -49,36 +49,58 @@ namespace util {
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
+    std::tm time_t2tm (const std::time_t now);
+    std::time_t tm2time_t (const std::tm& t);
+
+    std::tm mktm (int year = 0, uint8_t month = 0, uint8_t day = 0,
+                  uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0);
+
+    time_point mktime_point (int year = 0, uint8_t month = 0, uint8_t day = 0,
+                             uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0,
+                             unsigned millis = 0);
+
+    // --------------------------------------------------------------------------
     UTIL_EXPORT std::tm local_time (time_point const& tp);
     UTIL_EXPORT std::tm local_time_now ();
 
     // --------------------------------------------------------------------------
-    UTIL_EXPORT std::ostream& format_time (std::ostream&,
-                                           time_point const& tp,
-                                           const char* year_delem = "-",
-                                           const char* separator = " ",
-                                           const char* time_delem = ":",
-                                           bool add_millis = false);
+    UTIL_EXPORT std::ostream& format_datetime (std::ostream&,
+                                               time_point const& tp,
+                                               const char* year_delem = "-",
+                                               const char* separator = " ",
+                                               const char* time_delem = ":",
+                                               bool add_millis = false);
 
-    UTIL_EXPORT std::string format_time (time_point const& tp,
-                                         const char* year_delem = "-",
-                                         const char* separator = " ",
-                                         const char* time_delem = ":",
-                                         bool add_millis = false);
+    UTIL_EXPORT std::string format_datetime (time_point const& tp,
+                                             const char* year_delem = "-",
+                                             const char* separator = " ",
+                                             const char* time_delem = ":",
+                                             bool add_millis = false);
 
 #if (__cplusplus >= 201700L)
-    UTIL_EXPORT std::string format_time (file_time_point const& tp,
-                                         const char* year_delem = "-",
-                                         const char* separator = " ",
-                                         const char* time_delem = ":",
-                                         bool add_millis = false);
+    UTIL_EXPORT std::string format_datetime (file_time_point const& tp,
+                                             const char* year_delem = "-",
+                                             const char* separator = " ",
+                                             const char* time_delem = ":",
+                                             bool add_millis = false);
 #endif
 
-    UTIL_EXPORT time_point parse_time (const std::string& s);
-    UTIL_EXPORT time_point parse_time (std::istream& in);
+    UTIL_EXPORT time_point parse_datetime (const std::string& s);
+    UTIL_EXPORT time_point parse_datetime (std::istream& in);
 
     UTIL_EXPORT std::ostream& operator<< (std::ostream&, time_point const&);
     UTIL_EXPORT std::istream& operator>> (std::istream&, time_point&);
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream&,
+                                           time_point const& tp,
+                                           const char* delem = "-");
+
+    UTIL_EXPORT std::string format_date (time_point const& tp,
+                                         const char* delem = "-");
+
+    UTIL_EXPORT time_point parse_date (const std::string& s);
+    UTIL_EXPORT time_point parse_date (std::istream& in);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_duration (std::ostream&,
