@@ -108,7 +108,7 @@ namespace util {
       return strm.str();
     }
 
-#if (__cplusplus >= 201700L)
+#if (__cplusplus >= 201700L) || defined (BSD)
     std::string format_datetime (file_time_point const& ftp,
                                  const char* date_delem,
                                  const char* separator,
