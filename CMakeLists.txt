@@ -47,6 +47,9 @@ if(NOT TARGET util-obj)
     set (UTIL_VERSION_PATCH 0)
     set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
 
+    set (UTIL_INCLUDE_INSTALL_DIR include/guipp/util)
+    set (UTIL_LIBRARY_INSTALL_DIR lib/guipp)
+
     include_directories(${util_include})
 
     # header file to pass version settings to the source code
@@ -56,6 +59,7 @@ if(NOT TARGET util-obj)
     )
 
     file(GLOB SOURCE_FILES "*.h" "*.cpp" "*.inl")
+    file(GLOB INCLUDE_FILES "*.h" "*.inl")
 
     if (WIN32)
       add_definitions(-DWIN32_LEAN_AND_MEAN)
@@ -69,6 +73,7 @@ if(NOT TARGET util-obj)
 
     if(UTIL_BUILD_STATIC_MODULE_LIB)
         add_library(util-static STATIC $<TARGET_OBJECTS:util-obj>)
+        install(TARGETS util-static DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
     else()
         add_library(util SHARED $<TARGET_OBJECTS:util-obj>)
 
@@ -78,6 +83,8 @@ if(NOT TARGET util-obj)
                                      POSITION_INDEPENDENT_CODE ON
                                      VERSION ${UTIL_VERSION}
                                      SOVERSION ${UTIL_VERSION_MAJOR})
+
+        install(TARGETS util DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
     endif()
 
     GENERATE_EXPORT_HEADER(util-obj
@@ -86,5 +93,9 @@ if(NOT TARGET util-obj)
         EXPORT_FILE_NAME util-export.h
         STATIC_DEFINE UTIL_BUILT_AS_STATIC_LIB
     )
+    install(FILES ${INCLUDE_FILES}
+                  ${PROJECT_BINARY_DIR}/util-export.h
+                  ${PROJECT_BINARY_DIR}/util_version.h
+            DESTINATION ${UTIL_INCLUDE_INSTALL_DIR})
 
 endif()
