@@ -58,7 +58,7 @@ if(NOT TARGET util-obj)
         "${PROJECT_BINARY_DIR}/util_version.h"
     )
 
-    file(GLOB SOURCE_FILES "*.h" "*.cpp" "*.inl")
+    file(GLOB SOURCE_FILES "*.cpp")
     file(GLOB INCLUDE_FILES "*.h" "*.inl")
 
     if (WIN32)
@@ -67,7 +67,7 @@ if(NOT TARGET util-obj)
 
     add_definitions(-DEXPERIMENTAL -Dutil_obj_EXPORTS ${util_defines})
 
-    add_library(util-obj OBJECT ${SOURCE_FILES})
+    add_library(util-obj OBJECT ${SOURCE_FILES} ${INCLUDE_FILES})
 
     set_target_properties(util-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
@@ -93,6 +93,7 @@ if(NOT TARGET util-obj)
         EXPORT_FILE_NAME util-export.h
         STATIC_DEFINE UTIL_BUILT_AS_STATIC_LIB
     )
+
     install(FILES ${INCLUDE_FILES}
                   ${PROJECT_BINARY_DIR}/util-export.h
                   ${PROJECT_BINARY_DIR}/util_version.h
