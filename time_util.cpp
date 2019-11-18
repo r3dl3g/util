@@ -49,15 +49,20 @@ namespace util {
       return t;
     }
 
-    std::time_t tm2time_t (const std::tm& t) {
-      return std::mktime(const_cast<std::tm*>(&t));
+    std::time_t tm2time_t (const std::tm& t_) {
+      std::tm t = t_;
+      return std::mktime(&t);
     }
 
-    std::tm mktm (int year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
-      return std::tm{ (int)second, (int)minute, (int)hour, (int)day, (int)(month - 1), (int)(year - 1900), 0 };
+    std::time_t tm2time_t (std::tm&& t) {
+      return std::mktime(&t);
     }
 
-    time_point mktime_point (int year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, unsigned millis) {
+    std::tm mktm (int year, int month, int day, int hour, int minute, int second) {
+      return std::tm{ second, minute, hour, day, month - 1, year - 1900, 0 };
+    }
+
+    time_point mktime_point (int year, int month, int day, int hour, int minute, int second, int millis) {
       return std::chrono::system_clock::from_time_t(tm2time_t(mktm(year, month, day, hour, minute, second))) + std::chrono::milliseconds(millis);
     }
 
