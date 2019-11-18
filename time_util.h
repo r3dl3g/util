@@ -51,13 +51,14 @@ namespace util {
     // --------------------------------------------------------------------------
     std::tm time_t2tm (const std::time_t now);
     std::time_t tm2time_t (const std::tm& t);
+    std::time_t tm2time_t (std::tm&& t);
 
-    std::tm mktm (int year = 0, uint8_t month = 0, uint8_t day = 0,
-                  uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0);
+    std::tm mktm (int year = 0, int month = 0, int day = 0,
+                  int hour = 0, int minute = 0, int second = 0);
 
-    time_point mktime_point (int year = 0, uint8_t month = 0, uint8_t day = 0,
-                             uint8_t hour = 0, uint8_t minute = 0, uint8_t second = 0,
-                             unsigned millis = 0);
+    time_point mktime_point (int year = 0, int month = 0, int day = 0,
+                             int hour = 0, int minute = 0, int second = 0,
+                             int millis = 0);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::tm local_time (time_point const& tp);
