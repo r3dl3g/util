@@ -34,6 +34,7 @@
 // Library includes
 //
 #include <util-export.h>
+#include <util/ostreamfmt.h>
 
 /**
 * Provides an API to stream into OutputDebugString.
@@ -174,6 +175,34 @@ namespace util {
         *_Dest++ = *_First++;
       }
     }
+
+    namespace convert {
+
+      template<typename T>
+      inline std::string from (const T& t) {
+        return ostreamfmt(t);
+      }
+
+      template<>
+      inline std::string from<std::string>(const std::string& t) {
+        return t;
+      }
+
+      template<typename T>
+      inline T to (const std::string& s) {
+        T t = T();
+        std::istringstream(s) >> t;
+        return t;
+      }
+
+      // some specialisation for string to string conversion.
+      template<>
+      inline std::string to<std::string> (const std::string& s) {
+        return s;
+      }
+
+    }
+
 
   } // namespace string
 
