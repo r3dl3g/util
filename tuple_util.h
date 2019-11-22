@@ -109,26 +109,26 @@ namespace util {
     namespace convert {
 
       //-----------------------------------------------------------------------------
-      template<int N, typename ... Arguments>
+      template<int N, typename T>
       struct as {
-        static std::string string (int index, const std::tuple<Arguments...>& t) {
+        static std::string string (int index, const T& t) {
           if (N == index) {
             return util::string::convert::from(std::get<N>(t));
           }
-          return as<N - 1, Arguments...>::string(index, t);
+          return as<N - 1, T>::string(index, t);
         }
       };
 
-      template<typename ... Arguments>
-      struct as<-1, Arguments...> {
-        static std::string string (int, const std::tuple<Arguments...>& t) {
+      template<typename T>
+      struct as<-1, T> {
+        static std::string string (int, const T& t) {
           return {};
         }
       };
 
       template<typename ... Arguments>
       std::string as_string (int index, const std::tuple<Arguments...>& t) {
-        return as<sizeof...(Arguments) - 1, Arguments...>::string(index, t);
+        return as<sizeof...(Arguments) - 1, std::tuple<Arguments...>>::string(index, t);
       }
 
       //-----------------------------------------------------------------------------
