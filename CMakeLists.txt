@@ -69,7 +69,9 @@ if(NOT TARGET util-obj)
 
     add_library(util-obj OBJECT ${SOURCE_FILES} ${INCLUDE_FILES})
 
-    set_target_properties(util-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(util-obj PROPERTIES
+                          POSITION_INDEPENDENT_CODE ON
+                          FOLDER libraries)
 
     if(UTIL_BUILD_STATIC_MODULE_LIB)
         add_library(util-static STATIC $<TARGET_OBJECTS:util-obj>)
@@ -80,9 +82,10 @@ if(NOT TARGET util-obj)
         target_link_libraries(util PRIVATE ${util_sys_libraries})
 
         set_target_properties(util PROPERTIES
-                                     POSITION_INDEPENDENT_CODE ON
-                                     VERSION ${UTIL_VERSION}
-                                     SOVERSION ${UTIL_VERSION_MAJOR})
+                              POSITION_INDEPENDENT_CODE ON
+                              FOLDER libraries
+                              VERSION ${UTIL_VERSION}
+                              SOVERSION ${UTIL_VERSION_MAJOR})
 
         install(TARGETS util DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
     endif()
