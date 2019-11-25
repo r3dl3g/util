@@ -34,15 +34,15 @@ namespace util {
       down = true
     };
 
-    order operator- (order lhs, order rhs) {
+    inline order operator- (order lhs, order rhs) {
       return order(static_cast<unsigned char>(lhs) - static_cast<unsigned char>(rhs));
     }
 
-    order operator~ (order lhs) {
+    inline order operator~ (order lhs) {
       return order(!static_cast<bool>(lhs));
     }
 
-    order operator! (order lhs) {
+    inline order operator! (order lhs) {
       return order(!static_cast<bool>(lhs));
     }
 
