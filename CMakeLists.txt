@@ -28,9 +28,10 @@ if(NOT TARGET util-obj)
 
     if (UTIL_BUILD_STATIC_MODULE_LIB)
         set (util_libraries util-static)
-        set (util_defines "-DUTIL_BUILT_AS_STATIC_LIB")
+        set (util_defines "-DUTIL_BUILT_AS_STATIC_LIB -std=c++11")
     else()
         set (util_libraries util)
+        set (util_defines "-std=c++11")
     endif()
 
     set (util_sys_libraries ${util_sys_libraries} PARENT_SCOPE)
@@ -44,7 +45,7 @@ if(NOT TARGET util-obj)
 
     set (UTIL_VERSION_MAJOR 1)
     set (UTIL_VERSION_MINOR 0)
-    set (UTIL_VERSION_PATCH 0)
+    set (UTIL_VERSION_PATCH 1)
     set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
 
     set (UTIL_INCLUDE_INSTALL_DIR include/guipp/util)
