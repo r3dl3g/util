@@ -167,13 +167,12 @@ namespace util {
       return s;
     }
 
-#if __cplusplus <= 201103L
-    std::ostream& operator<< (std::ostream& os, const quoted_out& q) {
+    UTIL_EXPORT std::ostream& operator<< (std::ostream& os, const quoted_out& q) {
       os << '\"' << util::string::replaced(q.text, "\"", "\\\"") << '\"';
       return os;
     }
 
-    std::istream& operator>> (std::istream& is, quoted_in&& q) {
+    UTIL_EXPORT std::istream& operator>> (std::istream& is, quoted_in&& q) {
       if ((is.peek() != '"') && (is.peek() != '\'')) {
         throw std::runtime_error("Expected string delemiter ' or \" !");
       }
@@ -183,8 +182,6 @@ namespace util {
       replace(q.text, "\\\"", "\"");
       return is;
     }
-
-#endif
 
     std::istream& operator>> (std::istream& is, name_in&& n) {
       std::ostringstream str;
