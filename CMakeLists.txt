@@ -6,7 +6,7 @@ project("util" CXX)
 
 include (GenerateExportHeader)
 
-set(UTIL_BUILD_STATIC_MODULE_LIB ON CACHE BOOL "On to build a static library for this module, Off for shared library. default On")
+option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
 
 if(NOT TARGET util-obj)
 
@@ -34,10 +34,13 @@ if(NOT TARGET util-obj)
         set (util_defines "-std=c++11")
     endif()
 
-    set (util_sys_libraries ${util_sys_libraries} PARENT_SCOPE)
-    set (util_include ${util_include} PARENT_SCOPE)
-    set (util_libraries ${util_libraries} PARENT_SCOPE)
-    set (util_defines ${util_defines} PARENT_SCOPE)
+    get_directory_property(hasParent PARENT_DIRECTORY)
+    if (hasParent)
+      set (util_sys_libraries ${util_sys_libraries} PARENT_SCOPE)
+      set (util_include ${util_include} PARENT_SCOPE)
+      set (util_libraries ${util_libraries} PARENT_SCOPE)
+      set (util_defines ${util_defines} PARENT_SCOPE)
+    endif()
 
     message(STATUS "util_defines: ${util_defines}")
     message(STATUS "util_libraries: ${util_libraries}")
@@ -59,12 +62,28 @@ if(NOT TARGET util-obj)
         "${PROJECT_BINARY_DIR}/util_version.h"
     )
 
-    file(GLOB SOURCE_FILES "*.cpp")
-    file(GLOB INCLUDE_FILES "*.h" "*.inl")
+    set(SOURCE_FILES command_line.cpp
+                     string_util.cpp
+                     time_util.cpp)
+    set(INCLUDE_FILES bind_method.h
+                      blocking_queue.h
+                      command_line.h
+                      ostreamfmt.h
+                      ostream_resetter.h
+                      robbery.h
+                      sort_order.h
+                      string_util.h
+                      sys_fs.h
+                      time_util.h
+                      tuple_util.h
+                      variadic_util.h
+                      vector_util.h)
 
     if (WIN32)
       add_definitions(-DWIN32_LEAN_AND_MEAN)
     endif (WIN32)
+
+    set(CMAKE_DEBUG_POSTFIX d)
 
     add_definitions(-DEXPERIMENTAL -Dutil_obj_EXPORTS ${util_defines})
 
