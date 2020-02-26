@@ -11,7 +11,7 @@ build () {
 
   mkdir -p $builddir/$target
   pushd $builddir/$target
-  cmake "$prjdir" -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="$1" -DLOGGING_BUILD_STATIC_MODULE_LIB="$2"
+  cmake "$prjdir" -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="$1" -DUTIL_BUILD_STATIC_MODULE_LIB="$2"
   make -j6
   popd
 }
