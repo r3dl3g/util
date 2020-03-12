@@ -56,11 +56,7 @@ namespace util {
     }
 
     void parser::process (int argc, const char* argv[]) {
-      arg_list args;
-      for (int i = 1; i < argc; ++i) {
-        args.push_back(argv[i]);
-      }
-      process(args);
+      process(arg_list(argv + 1, argv + argc));
     }
 
     void parser::process (const arg_list& args) {
