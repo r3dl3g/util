@@ -63,6 +63,7 @@ if(NOT TARGET util-obj)
     )
 
     set(SOURCE_FILES command_line.cpp
+                     csv_reader.cpp
                      string_util.cpp
                      time_util.cpp)
     set(INCLUDE_FILES bind_method.h
