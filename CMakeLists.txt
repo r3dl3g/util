@@ -92,7 +92,8 @@ if(NOT TARGET util-obj)
 
     set_target_properties(util-obj PROPERTIES
                           POSITION_INDEPENDENT_CODE ON
-                          FOLDER libraries)
+                          FOLDER libraries
+                          CXX_STANDARD 11)
 
     if(UTIL_BUILD_STATIC_MODULE_LIB)
         add_library(util-static STATIC $<TARGET_OBJECTS:util-obj>)
