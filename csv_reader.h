@@ -62,17 +62,17 @@ namespace util {
       /**
        * Reads a csv file line by line and calls the given consumer for each parsed csv line.
        */
-      void read_csv_data (std::istream& in, std::function<void(const string_list&)> fn);
+      void read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) const;
 
       /**
        * Parses the next csv line.
        */
-      string_list parse_csv_line (std::istream& in);
+      string_list parse_csv_line (std::istream& in) const;
 
       /**
        * Parses the next entry from a csv file.
        */
-      int parse_entry (std::istream& in, int ch, string_list& list);
+      int parse_entry (std::istream& in, int ch, string_list& list) const;
 
       /**
        * Parses a next until the split char or a line is found, or the end of the stream is reached.

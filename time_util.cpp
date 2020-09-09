@@ -188,10 +188,9 @@ namespace util {
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_date (std::ostream& out,
-                                           time_point const& tp,
+                                           std::time_t tp,
                                            const char* delem) {
-      std::time_t now = std::chrono::system_clock::to_time_t(tp);
-      std::tm t = time_t2tm(now);
+      std::tm t = time_t2tm(tp);
 
       ostream_resetter r(out);
       out << std::setfill('0')
@@ -202,6 +201,21 @@ namespace util {
       return out;
     }
 
+    UTIL_EXPORT std::string format_date (std::time_t tp,
+                                         const char* delem) {
+      std::ostringstream strm;
+      format_date(strm, tp, delem);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           time_point const& tp,
+                                           const char* delem) {
+      std::time_t now = std::chrono::system_clock::to_time_t(tp);
+      return format_date(out, now, delem);
+    }
+
     UTIL_EXPORT std::string format_date (time_point const& tp,
                                          const char* delem) {
       std::ostringstream strm;
@@ -209,6 +223,7 @@ namespace util {
       return strm.str();
     }
 
+    // --------------------------------------------------------------------------
     UTIL_EXPORT time_point parse_date (std::istream& strm) {
       int year = 0, month = 1, day = 1;
       if (strm.good()) {

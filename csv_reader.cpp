@@ -36,7 +36,7 @@ namespace util {
       , ignore_first_line(ignore)
     {}
 
-    void reader::read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) {
+    void reader::read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) const {
       string_list line;
       bool ignoreFirst = is_ignore_first_line();
       while ((line = parse_csv_line(in)).size() > 0) {
@@ -48,7 +48,7 @@ namespace util {
       }
     }
 
-    reader::string_list reader::parse_csv_line (std::istream& in) {
+    reader::string_list reader::parse_csv_line (std::istream& in) const {
       string_list list;
 
       int ch = in.get();
@@ -65,7 +65,7 @@ namespace util {
     /*
      * Parses the next entry from a csv file.
      */
-    int reader::parse_entry (std::istream& in, int ch, string_list& list) {
+    int reader::parse_entry (std::istream& in, int ch, string_list& list) const {
       if ((ch == '"') || (ch == '\'')) {
         ch = parse_text(in, list, ch);
       } else if (ch != -1) {
