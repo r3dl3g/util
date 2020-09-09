@@ -93,6 +93,12 @@ namespace util {
     UTIL_EXPORT std::istream& operator>> (std::istream&, time_point&);
 
     // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           std::time_t tp,
+                                           const char* delem = "-");
+    UTIL_EXPORT std::string format_date (std::time_t tp,
+                                         const char* delem = "-");
+
     UTIL_EXPORT std::ostream& format_date (std::ostream&,
                                            time_point const& tp,
                                            const char* delem = "-");
