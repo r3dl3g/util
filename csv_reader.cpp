@@ -37,9 +37,9 @@ namespace util {
     {}
 
     void reader::read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) const {
-      string_list line;
       bool ignoreFirst = is_ignore_first_line();
-      while ((line = parse_csv_line(in)).size() > 0) {
+      while (in.good()) {
+        string_list line = parse_csv_line(in);
         if (ignoreFirst) {
           ignoreFirst = false;
         } else {
@@ -55,56 +55,54 @@ namespace util {
       while ((ch == '\n') || (ch == '\r')) {
         ch = in.get();
       }
-      ch = parse_entry(in, ch, list);
+      list.emplace_back(csv::parse_entry(in, ch, get_csv_delimiter()));
       while (ch == get_csv_delimiter()) {
-        ch = parse_entry(in, in.get(), list);
+        ch = in.get();
+        list.emplace_back(csv::parse_entry(in, ch, get_csv_delimiter()));
       }
       return list;
     }
 
     /*
-     * Parses the next entry from a csv file.
-     */
-    int reader::parse_entry (std::istream& in, int ch, string_list& list) const {
-      if ((ch == '"') || (ch == '\'')) {
-        ch = parse_text(in, list, ch);
-      } else if (ch != -1) {
-        ch = parse_none_text(in, list, ch, get_csv_delimiter());
-      }
-      return ch;
-    }
-
-    /*
-     * Parses a next until the split char or a line is found, or the end of the stream is reached.
-     */
-    int reader::parse_none_text (std::istream& in, string_list& list, int ch, int splitChar) {
-      std::ostringstream buffer;
-      while ((ch != splitChar) && (ch != '\n') && (ch != '\r') && (ch != -1)) {
-        buffer.put((char) ch);
-        ch = in.get();
-      }
-      list.emplace_back(buffer.str());
-      return ch;
-    }
-
-    /*
      * Parse a buffer until the endChar is found or the stream end is reached
      */
-    int reader::parse_text (std::istream& in, string_list& list, int endChar) {
+    std::string parse_text (std::istream& in, int& ch) {
+      const int endChar = ch;
       std::ostringstream buffer;
-      int ch = endChar;
       while (ch != -1) {
         ch = in.get();
         if (ch == endChar) {
           ch = in.get();
           if (ch != endChar) {
-            list.emplace_back(buffer.str());
-            return ch;
+            return buffer.str();
           }
         }
         buffer.put((char) ch);
       }
-      return -1;
+      return buffer.str();
+    }
+
+    /*
+     * Parses a next until the split char or a line is found, or the end of the stream is reached.
+     */
+    std::string parse_none_text (std::istream& in, int& ch, int splitChar) {
+      std::ostringstream buffer;
+      while ((ch != splitChar) && (ch != '\n') && (ch != '\r') && (ch != -1)) {
+        buffer.put((char) ch);
+        ch = in.get();
+      }
+      return buffer.str();
+    }
+
+    /*
+     * Parses the next entry from a csv file.
+     */
+    std::string parse_entry (std::istream& in, int& ch, int splitChar) {
+      if ((ch == '"') || (ch == '\'')) {
+        return parse_text(in, ch);
+      } else {
+        return parse_none_text(in, ch, splitChar);
+      }
     }
 
   } // namespace csv
