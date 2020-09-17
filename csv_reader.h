@@ -30,6 +30,7 @@
 //
 // Library includes
 //
+#include <util/string_util.h>
 #include <util-export.h>
 
 
@@ -37,7 +38,7 @@ namespace util {
 
   namespace csv {
 
-    struct reader {
+    struct UTIL_EXPORT reader {
       typedef std::vector<std::string> string_list;
       typedef string_list::const_iterator iterator;
 
@@ -69,24 +70,56 @@ namespace util {
        */
       string_list parse_csv_line (std::istream& in) const;
 
-      /**
-       * Parses the next entry from a csv file.
-       */
-      int parse_entry (std::istream& in, int ch, string_list& list) const;
-
-      /**
-       * Parses a next until the split char or a line is found, or the end of the stream is reached.
-       */
-      static int parse_none_text (std::istream& in, string_list& list, int ch, int splitChar);
-
-      /**
-       * Parse a buffer until the endChar is found or the stream end is reached
-       */
-      static int parse_text (std::istream& in, string_list& list, int endChar);
-
     private:
       char csv_delimiter;
       bool ignore_first_line;
+    };
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::string parse_text (std::istream& in, int& ch);
+    UTIL_EXPORT std::string parse_none_text (std::istream& in, int& ch, int splitChar);
+    UTIL_EXPORT std::string parse_entry (std::istream& in, int& ch, int splitChar);
+
+    // --------------------------------------------------------------------------
+    namespace detail {
+
+      template<typename T>
+      T csv_element (std::istream& in, int& ch, int splitChar) {
+        T t = util::string::convert::to<T>(parse_entry(in, ch, splitChar));
+        ch = in.get();
+        return t;
+      }
+
+      template<typename ... Arguments>
+      std::tuple<Arguments...> csv_tuple (std::istream& in, int& ch, int splitChar) {
+        return std::make_tuple(csv_element<Arguments>(in, ch, splitChar)...);
+      }
+
+    } // namespace detail
+
+    // --------------------------------------------------------------------------
+    template<typename ... Arguments>
+    struct tuple_reader {
+      typedef std::tuple<Arguments...> tuple;
+
+      static void read_csv (std::istream& in, char delimiter, bool ignoreFirst, std::function<void(const tuple&)> fn) {
+        bool ignore = ignoreFirst;
+        int ch = in.get();
+        while (in.good()) {
+          while ((ch == '\n') || (ch == '\r')) {
+            ch = in.get();
+          }
+          if (ignore) {
+            while ((ch != '\n') && (ch != '\r')) {
+              ch = in.get();
+            }
+            ignore = false;
+          } else {
+            fn(detail::csv_tuple<Arguments...>(in, ch, delimiter));
+            ch = in.get();
+          }
+        }
+      }
     };
 
   } // namespace csv
