@@ -177,15 +177,6 @@ namespace util {
       return mktime_point(year, month, day, hour, minute, second, millis);
     }
 
-    std::ostream& operator<< (std::ostream& out, time_point const& tp) {
-      return format_datetime(out, tp);
-    }
-
-    std::istream& operator>> (std::istream& in, time_point& tp) {
-      tp = parse_datetime(in);
-      return in;
-    }
-
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_date (std::ostream& out,
                                            std::time_t tp,
@@ -364,15 +355,28 @@ namespace util {
       return std::chrono::milliseconds(((((((day * 24) + hour) * 60) + minute) * 60) + second) * 1000 + millis);
     }
 
-    std::ostream& operator<< (std::ostream& out, duration const& d) {
-      return format_duration(out, d);
-    }
-
-    std::istream& operator>> (std::istream& in, duration& d) {
-      d = parse_duration(in);
-      return in;
-    }
-
   } // namespace time
 
 } // namespace util
+
+namespace std {
+
+  ostream& operator<< (ostream& out, util::time::time_point const& tp) {
+    return util::time::format_datetime(out, tp);
+  }
+
+  istream& operator>> (istream& in, util::time::time_point& tp) {
+    tp = util::time::parse_datetime(in);
+    return in;
+  }
+
+  ostream& operator<< (ostream& out, util::time::duration const& d) {
+    return util::time::format_duration(out, d, " ", ":", true);
+  }
+
+  istream& operator>> (istream& in, util::time::duration& d) {
+    d = util::time::parse_duration(in);
+    return in;
+  }
+
+} // namespace std

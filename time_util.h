@@ -89,9 +89,6 @@ namespace util {
     UTIL_EXPORT time_point parse_datetime (const std::string& s);
     UTIL_EXPORT time_point parse_datetime (std::istream& in);
 
-    UTIL_EXPORT std::ostream& operator<< (std::ostream&, time_point const&);
-    UTIL_EXPORT std::istream& operator>> (std::istream&, time_point&);
-
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_date (std::ostream& out,
                                            std::time_t tp,
@@ -136,9 +133,16 @@ namespace util {
     UTIL_EXPORT duration parse_duration (const std::string& s);
     UTIL_EXPORT duration parse_duration (std::istream& in);
 
-    UTIL_EXPORT std::ostream& operator<< (std::ostream&, duration const&);
-    UTIL_EXPORT std::istream& operator>> (std::istream&, duration&);
-
   } // namespace time
 
 } // namespace util
+
+namespace std {
+
+  UTIL_EXPORT ostream& operator<< (ostream&, util::time::time_point const&);
+  UTIL_EXPORT istream& operator>> (istream&, util::time::time_point&);
+
+  UTIL_EXPORT ostream& operator<< (ostream&, util::time::duration const&);
+  UTIL_EXPORT istream& operator>> (istream&, util::time::duration&);
+
+} // namespace std
