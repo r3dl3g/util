@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <util/sort_order.h>
+#include <util/string_util.h>
 
 namespace util {
 
