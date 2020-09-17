@@ -90,10 +90,34 @@ namespace util {
         return t;
       }
 
-      template<typename ... Arguments>
-      std::tuple<Arguments...> csv_tuple (std::istream& in, int& ch, int splitChar) {
+#ifdef CAN_CALL_VARIADIC_IN_ORDER
+	  template<typename ... Arguments>
+	  std::tuple<Arguments...> csv_tuple (std::istream& in, int& ch, int splitChar) {
         return std::make_tuple(csv_element<Arguments>(in, ch, splitChar)...);
-      }
+	  }
+#else
+	
+      template<typename ... Arguments>
+      struct csv_tuple {
+        static std::tuple<Arguments...> read (std::istream& in, int& ch, int splitChar);
+      };
+
+      template<typename T>
+      struct csv_tuple<T> {
+        static std::tuple<T> read (std::istream& in, int& ch, int splitChar) {
+          return std::make_tuple(csv_element<T>(in, ch, splitChar));
+        }
+      };
+
+      template<typename T, typename ... Arguments>
+      struct csv_tuple<T, Arguments...> {
+        static std::tuple<T, Arguments...> read (std::istream& in, int& ch, int splitChar) {
+          auto lhs = csv_tuple<T>::read(in, ch, splitChar);
+          auto rhs = csv_tuple<Arguments...>::read(in, ch, splitChar);
+          return std::tuple_cat(std::move(lhs), std::move(rhs));
+        }
+      };
+#endif
 
     } // namespace detail
 
@@ -115,7 +139,7 @@ namespace util {
             }
             ignore = false;
           } else {
-            fn(detail::csv_tuple<Arguments...>(in, ch, delimiter));
+            fn(detail::csv_tuple<Arguments...>::read(in, ch, delimiter));
             ch = in.get();
           }
         }
