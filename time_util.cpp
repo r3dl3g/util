@@ -95,9 +95,10 @@ namespace util {
           << std::setw(2) << t.tm_sec;
 
       if (add_millis) {
-        auto t0 = std::chrono::system_clock::from_time_t(now);
+        auto t0 = std::chrono::time_point_cast<std::chrono::seconds>(tp);
+//        auto t0 = std::chrono::system_clock::from_time_t(now);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
 
       return out;
@@ -265,7 +266,7 @@ namespace util {
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
       return out;
     }
@@ -290,7 +291,7 @@ namespace util {
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
       return out;
     }
