@@ -38,51 +38,25 @@ namespace util {
 
   namespace csv {
 
-    struct UTIL_EXPORT reader {
-      typedef std::vector<std::string> string_list;
-      typedef string_list::const_iterator iterator;
-
-      reader (char delimiter = ';', bool ignore = false);
-
-      inline char get_csv_delimiter () const {
-        return csv_delimiter;
-      }
-
-      inline void set_csv_delimiter (char delimiter) {
-        csv_delimiter = delimiter;
-      }
-
-      bool is_ignore_first_line () const {
-        return ignore_first_line;
-      }
-
-      void set_ignore_first_line (bool ignore) {
-        ignore_first_line = ignore;
-      }
-
-      /**
-       * Reads a csv file line by line and calls the given consumer for each parsed csv line.
-       */
-      void read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) const;
-
-      /**
-       * Parses the next csv line.
-       */
-      string_list parse_csv_line (std::istream& in) const;
-
-    private:
-      char csv_delimiter;
-      bool ignore_first_line;
-    };
-
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::string parse_text (std::istream& in, int& ch);
-    UTIL_EXPORT std::string parse_none_text (std::istream& in, int& ch, int splitChar);
-    UTIL_EXPORT std::string parse_entry (std::istream& in, int& ch, int splitChar);
+    UTIL_EXPORT std::string parse_none_text (std::istream& in, int& ch, int splitChar = ';');
+    UTIL_EXPORT std::string parse_entry (std::istream& in, int& ch, int splitChar = ';');
+    UTIL_EXPORT std::vector<std::string> parse_csv_line (std::istream& in, int splitChar = ';');
+    UTIL_EXPORT void read_csv_data (std::istream& in, char delimiter, bool ignoreFirst,
+                                    std::function<void(const std::vector<std::string>&)> fn);
+
+    // --------------------------------------------------------------------------
+    struct skip {};
 
     // --------------------------------------------------------------------------
     namespace detail {
 
+      void skip_text (std::istream& in, int& ch);
+      void skip_none_text (std::istream& in, int& ch, int splitChar);
+      void skip_entry (std::istream& in, int& ch, int splitChar);
+
+      // --------------------------------------------------------------------------
       template<typename T>
       T csv_element (std::istream& in, int& ch, int splitChar) {
         T t = util::string::convert::to<T>(parse_entry(in, ch, splitChar));
@@ -90,11 +64,14 @@ namespace util {
         return t;
       }
 
+      template<>
+      skip csv_element<skip> (std::istream& in, int& ch, int splitChar);
+
 #ifdef CAN_CALL_VARIADIC_IN_ORDER
-	  template<typename ... Arguments>
-	  std::tuple<Arguments...> csv_tuple (std::istream& in, int& ch, int splitChar) {
+      template<typename ... Arguments>
+      std::tuple<Arguments...> csv_tuple (std::istream& in, int& ch, int splitChar) {
         return std::make_tuple(csv_element<Arguments>(in, ch, splitChar)...);
-	  }
+      }
 #else
 	
       template<typename ... Arguments>

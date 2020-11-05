@@ -31,40 +31,8 @@ namespace util {
 
   namespace csv {
 
-    reader::reader (char delimiter, bool ignore)
-      : csv_delimiter(delimiter)
-      , ignore_first_line(ignore)
-    {}
-
-    void reader::read_csv_data (std::istream& in, std::function<void(const string_list&)> fn) const {
-      bool ignoreFirst = is_ignore_first_line();
-      while (in.good()) {
-        string_list line = parse_csv_line(in);
-        if (ignoreFirst) {
-          ignoreFirst = false;
-        } else {
-          fn(line);
-        }
-      }
-    }
-
-    reader::string_list reader::parse_csv_line (std::istream& in) const {
-      string_list list;
-
-      int ch = in.get();
-      while ((ch == '\n') || (ch == '\r')) {
-        ch = in.get();
-      }
-      list.emplace_back(csv::parse_entry(in, ch, get_csv_delimiter()));
-      while (ch == get_csv_delimiter()) {
-        ch = in.get();
-        list.emplace_back(csv::parse_entry(in, ch, get_csv_delimiter()));
-      }
-      return list;
-    }
-
     /*
-     * Parse a buffer until the endChar is found or the stream end is reached
+     * Parse into a buffer until the endChar is found or the stream end is reached
      */
     std::string parse_text (std::istream& in, int& ch) {
       const int endChar = ch;
@@ -83,7 +51,7 @@ namespace util {
     }
 
     /*
-     * Parses a next until the split char or a line is found, or the end of the stream is reached.
+     * Parse into a buffer until the split char or a line is found, or the end of the stream is reached.
      */
     std::string parse_none_text (std::istream& in, int& ch, int splitChar) {
       std::ostringstream buffer;
@@ -103,6 +71,79 @@ namespace util {
       } else {
         return parse_none_text(in, ch, splitChar);
       }
+    }
+
+    std::vector<std::string> parse_csv_line (std::istream& in, int splitChar) {
+      std::vector<std::string> list;
+
+      int ch = in.get();
+      while ((ch == '\n') || (ch == '\r')) {
+        ch = in.get();
+      }
+      list.emplace_back(csv::parse_entry(in, ch, splitChar));
+      while (ch == splitChar) {
+        ch = in.get();
+        list.emplace_back(csv::parse_entry(in, ch, splitChar));
+      }
+      return list;
+    }
+
+    void read_csv_data (std::istream& in, char delimiter, bool ignoreFirst, std::function<void(const std::vector<std::string>&)> fn) {
+      while (in.good()) {
+        std::vector<std::string> line = parse_csv_line(in, delimiter);
+        if (ignoreFirst) {
+          ignoreFirst = false;
+        } else {
+          fn(line);
+        }
+      }
+    }
+
+    namespace detail {
+
+      /*
+       * Parse until the endChar is found or the stream end is reached
+       */
+      void skip_text (std::istream& in, int& ch) {
+        const int endChar = ch;
+        while (ch != -1) {
+          ch = in.get();
+          if (ch == endChar) {
+            ch = in.get();
+            if (ch != endChar) {
+              return;
+            }
+          }
+        }
+      }
+
+      /*
+       * Parse until the split char or a line is found, or the end of the stream is reached.
+       */
+      void skip_none_text (std::istream& in, int& ch, int splitChar) {
+        while ((ch != splitChar) && (ch != '\n') && (ch != '\r') && (ch != -1)) {
+          ch = in.get();
+        }
+      }
+
+      /*
+       * Parses the next entry from a csv file.
+       */
+      void skip_entry (std::istream& in, int& ch, int splitChar) {
+        if ((ch == '"') || (ch == '\'')) {
+          skip_text(in, ch);
+        } else {
+          skip_none_text(in, ch, splitChar);
+        }
+      }
+
+      template<>
+      skip csv_element<skip> (std::istream& in, int& ch, int splitChar) {
+        skip_entry(in, ch, splitChar);
+        ch = in.get();
+        return {};
+      }
+
     }
 
   } // namespace csv
