@@ -89,10 +89,13 @@ namespace util {
     UTIL_EXPORT time_point parse_datetime (const std::string& s);
     UTIL_EXPORT time_point parse_datetime (std::istream& in);
 
-    UTIL_EXPORT std::ostream& operator<< (std::ostream&, time_point const&);
-    UTIL_EXPORT std::istream& operator>> (std::istream&, time_point&);
-
     // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           std::time_t tp,
+                                           const char* delem = "-");
+    UTIL_EXPORT std::string format_date (std::time_t tp,
+                                         const char* delem = "-");
+
     UTIL_EXPORT std::ostream& format_date (std::ostream&,
                                            time_point const& tp,
                                            const char* delem = "-");
@@ -130,9 +133,87 @@ namespace util {
     UTIL_EXPORT duration parse_duration (const std::string& s);
     UTIL_EXPORT duration parse_duration (std::istream& in);
 
-    UTIL_EXPORT std::ostream& operator<< (std::ostream&, duration const&);
-    UTIL_EXPORT std::istream& operator>> (std::istream&, duration&);
+    // --------------------------------------------------------------------------
+    struct chronometer {
+      typedef std::chrono::system_clock clock;
+      typedef clock::duration duration;
+      typedef clock::time_point time_point;
 
+      inline chronometer () {
+        start();
+      }
+
+      inline void start () {
+        begin = clock::now();
+      }
+
+      inline duration stop () const {
+        return clock::now() - begin;
+      }
+
+      template<typename P>
+      inline duration process (P p) {
+        start();
+        p();
+        return stop();
+      }
+
+    private:
+      time_point begin;
+    };
+
+    // --------------------------------------------------------------------------
+    struct average_chronometer {
+
+      inline average_chronometer ()
+        : count_ (0)
+      {}
+
+      inline void start () {
+        timer_.start();
+      }
+
+      inline void stop () {
+        duration_ += timer_.stop();
+        ++count_;
+      }
+
+      template<typename P>
+      inline void process (P p) {
+        start();
+        p();
+        stop();
+      }
+
+      inline chronometer::duration average_duration () const {
+        return duration_ / count_;
+      }
+
+      inline chronometer::duration cumulated_duration () const {
+        return duration_;
+      }
+
+      inline std::size_t count () const {
+        return count_;
+      }
+
+    private:
+      chronometer timer_;
+      chronometer::duration duration_;
+      std::size_t count_;
+    };
+
+    // --------------------------------------------------------------------------
   } // namespace time
 
 } // namespace util
+
+namespace std {
+
+  UTIL_EXPORT ostream& operator<< (ostream&, util::time::time_point const&);
+  UTIL_EXPORT istream& operator>> (istream&, util::time::time_point&);
+
+  UTIL_EXPORT ostream& operator<< (ostream&, util::time::duration const&);
+  UTIL_EXPORT istream& operator>> (istream&, util::time::duration&);
+
+} // namespace std

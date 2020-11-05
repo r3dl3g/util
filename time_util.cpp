@@ -95,9 +95,10 @@ namespace util {
           << std::setw(2) << t.tm_sec;
 
       if (add_millis) {
-        auto t0 = std::chrono::system_clock::from_time_t(now);
+        auto t0 = std::chrono::time_point_cast<std::chrono::seconds>(tp);
+//        auto t0 = std::chrono::system_clock::from_time_t(now);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
 
       return out;
@@ -177,21 +178,11 @@ namespace util {
       return mktime_point(year, month, day, hour, minute, second, millis);
     }
 
-    std::ostream& operator<< (std::ostream& out, time_point const& tp) {
-      return format_datetime(out, tp);
-    }
-
-    std::istream& operator>> (std::istream& in, time_point& tp) {
-      tp = parse_datetime(in);
-      return in;
-    }
-
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_date (std::ostream& out,
-                                           time_point const& tp,
+                                           std::time_t tp,
                                            const char* delem) {
-      std::time_t now = std::chrono::system_clock::to_time_t(tp);
-      std::tm t = time_t2tm(now);
+      std::tm t = time_t2tm(tp);
 
       ostream_resetter r(out);
       out << std::setfill('0')
@@ -202,6 +193,21 @@ namespace util {
       return out;
     }
 
+    UTIL_EXPORT std::string format_date (std::time_t tp,
+                                         const char* delem) {
+      std::ostringstream strm;
+      format_date(strm, tp, delem);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           time_point const& tp,
+                                           const char* delem) {
+      std::time_t now = std::chrono::system_clock::to_time_t(tp);
+      return format_date(out, now, delem);
+    }
+
     UTIL_EXPORT std::string format_date (time_point const& tp,
                                          const char* delem) {
       std::ostringstream strm;
@@ -209,6 +215,7 @@ namespace util {
       return strm.str();
     }
 
+    // --------------------------------------------------------------------------
     UTIL_EXPORT time_point parse_date (std::istream& strm) {
       int year = 0, month = 1, day = 1;
       if (strm.good()) {
@@ -259,7 +266,7 @@ namespace util {
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
       return out;
     }
@@ -284,7 +291,7 @@ namespace util {
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
-        out << '.' << std::setw(3) << micros.count();
+        out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
       return out;
     }
@@ -349,15 +356,28 @@ namespace util {
       return std::chrono::milliseconds(((((((day * 24) + hour) * 60) + minute) * 60) + second) * 1000 + millis);
     }
 
-    std::ostream& operator<< (std::ostream& out, duration const& d) {
-      return format_duration(out, d);
-    }
-
-    std::istream& operator>> (std::istream& in, duration& d) {
-      d = parse_duration(in);
-      return in;
-    }
-
   } // namespace time
 
 } // namespace util
+
+namespace std {
+
+  ostream& operator<< (ostream& out, util::time::time_point const& tp) {
+    return util::time::format_datetime(out, tp);
+  }
+
+  istream& operator>> (istream& in, util::time::time_point& tp) {
+    tp = util::time::parse_datetime(in);
+    return in;
+  }
+
+  ostream& operator<< (ostream& out, util::time::duration const& d) {
+    return util::time::format_duration(out, d, " ", ":", true);
+  }
+
+  istream& operator>> (istream& in, util::time::duration& d) {
+    d = util::time::parse_duration(in);
+    return in;
+  }
+
+} // namespace std

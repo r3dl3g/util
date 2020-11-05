@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <util/sort_order.h>
+#include <util/string_util.h>
 
 namespace util {
 
@@ -132,6 +133,27 @@ namespace util {
       }
 
       //-----------------------------------------------------------------------------
+      template<int N, typename T>
+      struct to {
+        static void stream (std::ostream& out, const T& t) {
+          to<N - 1, T>::stream(out, t);
+          out << "," << std::get<N>(t);
+        }
+      };
+
+      template<typename T>
+      struct to<0, T> {
+        static void stream (std::ostream& out, const T& t) {
+          out << std::get<0>(t);
+        }
+      };
+
+      template<typename ... Arguments>
+      void to_stream (std::ostream& out, const std::tuple<Arguments...>& t) {
+        to<sizeof...(Arguments) - 1, std::tuple<Arguments...>>::stream(out, t);
+      }
+
+      //-----------------------------------------------------------------------------
       template<std::size_t N, std::size_t I, typename T, typename ... Args>
       struct from {
         static std::tuple<T, Args...> vector (const std::vector<std::string>& v) {
@@ -156,3 +178,13 @@ namespace util {
   } // namespace tuple
 
 } // namespace util
+
+namespace std {
+
+  template<typename ... Arguments>
+  ostream& operator<< (ostream& out, const std::tuple<Arguments...>& t) {
+    util::tuple::convert::to_stream(out, t);
+    return out;
+  }
+
+} // namespace std
