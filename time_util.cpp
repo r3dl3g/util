@@ -27,6 +27,7 @@
 // Library includes
 //
 #include "time_util.h"
+#include "string_util.h"
 #include "ostreamfmt.h"
 #include "ostream_resetter.h"
 
@@ -59,7 +60,7 @@ namespace util {
     }
 
     std::tm mktm (int year, int month, int day, int hour, int minute, int second) {
-      return std::tm{ second, minute, hour, day, month - 1, year - 1900, 0 };
+      return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0 };
     }
 
     time_point mktime_point (int year, int month, int day, int hour, int minute, int second, int millis) {
@@ -76,28 +77,74 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
+    UTIL_EXPORT int week_of_year (const std::tm& t) {
+      return ((t.tm_yday + 7 - weekday_of(t)) / 7);
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::time_t first_day_of_week (int year, int w) {
+      const int yday = w * 7;
+      const auto t = tm2time_t(mktm(year, 1, yday));
+      const auto tm = time_t2tm(t);
+      if (tm.tm_wday == 1) { // already monday
+        return t;
+      }
+      return tm2time_t(mktm(year_of(tm), 1, tm.tm_yday + 1 - weekday_of(tm)));
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_datetime (std::ostream& out,
+                                               const std::tm& t,
+                                               const char* date_delem,
+                                               const char* separator,
+                                               const char* time_delem) {
+      format_date(out, t, date_delem);
+      out << separator;
+      format_time(out, t, time_delem);
+
+      return out;
+    }
+
+    std::string format_datetime (time_point const& tp,
+                                 const char* date_delem,
+                                 const char* separator,
+                                 const char* time_delem) {
+      std::ostringstream strm;
+      format_datetime(strm, tp, date_delem, separator, time_delem);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_datetime (std::ostream& out,
+                                               const std::time_t& tp,
+                                               const char* date_delem,
+                                               const char* separator,
+                                               const char* time_delem) {
+      return format_datetime(out, time_t2tm(tp), date_delem, separator, time_delem);
+    }
+
+    std::string format_datetime (const std::time_t& tp,
+                                 const char* date_delem,
+                                 const char* separator,
+                                 const char* time_delem) {
+      std::ostringstream strm;
+      format_datetime(strm, tp, date_delem, separator, time_delem);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_datetime (std::ostream& out,
                                                time_point const& tp,
                                                const char* date_delem,
                                                const char* separator,
                                                const char* time_delem,
                                                bool add_millis) {
-      std::time_t now = std::chrono::system_clock::to_time_t(tp);
-      std::tm t = time_t2tm(now);
-
-      ostream_resetter r(out);
-      out << std::setfill('0')
-          << (t.tm_year + 1900) << date_delem
-          << std::setw(2) << (t.tm_mon + 1) << date_delem
-          << std::setw(2) << t.tm_mday << separator
-          << std::setw(2) << t.tm_hour << time_delem
-          << std::setw(2) << t.tm_min << time_delem
-          << std::setw(2) << t.tm_sec;
+      format_datetime(out, time_t2tm(std::chrono::system_clock::to_time_t(tp)), date_delem, separator, time_delem);
 
       if (add_millis) {
         auto t0 = std::chrono::time_point_cast<std::chrono::seconds>(tp);
-//        auto t0 = std::chrono::system_clock::from_time_t(now);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
+        ostream_resetter r(out);
         out << '.' << std::setfill('0') << std::setw(6) << micros.count();
       }
 
@@ -114,6 +161,7 @@ namespace util {
       return strm.str();
     }
 
+    // --------------------------------------------------------------------------
 #if (__cplusplus >= 201700L) || defined (BSD)
     std::string format_datetime (file_time_point const& ftp,
                                  const char* date_delem,
@@ -179,40 +227,48 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
-    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
-                                           std::time_t tp,
+    UTIL_EXPORT std::ostream& format_time (std::ostream& out,
+                                           const std::tm& t,
                                            const char* delem) {
-      std::tm t = time_t2tm(tp);
-
       ostream_resetter r(out);
       out << std::setfill('0')
-          << (t.tm_year + 1900) << delem
-          << std::setw(2) << (t.tm_mon + 1) << delem
-          << std::setw(2) << t.tm_mday;
+          << std::setw(2) << t.tm_hour << delem
+          << std::setw(2) << t.tm_min << delem
+          << std::setw(2) << t.tm_sec;
 
       return out;
     }
 
-    UTIL_EXPORT std::string format_date (std::time_t tp,
+    UTIL_EXPORT std::string format_time (const std::tm& t,
                                          const char* delem) {
       std::ostringstream strm;
-      format_date(strm, tp, delem);
+      format_time(strm, t, delem);
       return strm.str();
     }
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_date (std::ostream& out,
-                                           time_point const& tp,
+                                           const std::tm& t,
                                            const char* delem) {
-      std::time_t now = std::chrono::system_clock::to_time_t(tp);
-      return format_date(out, now, delem);
+      ostream_resetter r(out);
+      out << std::setfill('0')
+          << year_of(t) << delem
+          << std::setw(2) << month_of(t) << delem
+          << std::setw(2) << t.tm_mday;
+
+      return out;
     }
 
-    UTIL_EXPORT std::string format_date (time_point const& tp,
-                                         const char* delem) {
-      std::ostringstream strm;
-      format_date(strm, tp, delem);
-      return strm.str();
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           const std::time_t& tp,
+                                           const char* delem) {
+      return format_date(out, time_t2tm(tp), delem);
+    }
+
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
+                                           time_point const& tp,
+                                           const char* delem) {
+      return format_date(out, std::chrono::system_clock::to_time_t(tp), delem);
     }
 
     // --------------------------------------------------------------------------

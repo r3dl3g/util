@@ -65,6 +65,88 @@ namespace util {
     UTIL_EXPORT std::tm local_time_now ();
 
     // --------------------------------------------------------------------------
+    inline bool is_leap_year (int year) {
+      return !(year % 4) && ((year % 100 ) || !(year % 400));
+    }
+
+    inline int year_of (const std::tm& t) {
+      return t.tm_year + 1900;
+    }
+
+    inline int month_of (const std::tm& t) {
+      return t.tm_mon + 1;
+    }
+
+    inline int day_of (const std::tm& t) {
+      return t.tm_mday;
+    }
+
+    inline int weekday_of (const std::tm& t) {
+      return (t.tm_wday + 6) % 7;
+    }
+
+    inline int tm_year (int year) {
+      return year - 1900;
+    }
+
+    inline int tm_mon (int mon) {
+      return mon - 1;
+    }
+
+    inline int tm_day (int day) {
+      return day;
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT int week_of_year (const std::tm&);
+    UTIL_EXPORT std::time_t first_day_of_week (int y, int w);
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_time (std::ostream& out, const std::tm& t, const char* delem = ":");
+    UTIL_EXPORT std::string format_time (const std::tm& t, const char* delem = ":");
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out, const std::tm& t, const char* delem = "-");
+    UTIL_EXPORT std::ostream& format_date (std::ostream& out, const std::time_t& tp, const char* delem = "-");
+    UTIL_EXPORT std::ostream& format_date (std::ostream&, time_point const& tp, const char* delem = "-");
+
+    // --------------------------------------------------------------------------
+    template<typename T>
+    std::string format_date (const T& t, const char* delem = "-") {
+      std::ostringstream strm;
+      format_date(strm, t, delem);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT time_point parse_date (const std::string& s);
+    UTIL_EXPORT time_point parse_date (std::istream& in);
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_datetime (std::ostream&,
+                                               const std::tm& t,
+                                               const char* year_delem = "-",
+                                               const char* separator = " ",
+                                               const char* time_delem = ":");
+
+    UTIL_EXPORT std::string format_datetime (const std::tm& t,
+                                             const char* year_delem = "-",
+                                             const char* separator = " ",
+                                             const char* time_delem = ":");
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::ostream& format_datetime (std::ostream&,
+                                               const std::time_t& tp,
+                                               const char* year_delem = "-",
+                                               const char* separator = " ",
+                                               const char* time_delem = ":");
+
+    UTIL_EXPORT std::string format_datetime (const std::time_t& tp,
+                                             const char* year_delem = "-",
+                                             const char* separator = " ",
+                                             const char* time_delem = ":");
+
+    // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_datetime (std::ostream&,
                                                time_point const& tp,
                                                const char* year_delem = "-",
@@ -78,6 +160,7 @@ namespace util {
                                              const char* time_delem = ":",
                                              bool add_millis = false);
 
+    // --------------------------------------------------------------------------
 #if (__cplusplus >= 201700L) || defined (BSD)
     UTIL_EXPORT std::string format_datetime (file_time_point const& tp,
                                              const char* year_delem = "-",
@@ -88,23 +171,6 @@ namespace util {
 
     UTIL_EXPORT time_point parse_datetime (const std::string& s);
     UTIL_EXPORT time_point parse_datetime (std::istream& in);
-
-    // --------------------------------------------------------------------------
-    UTIL_EXPORT std::ostream& format_date (std::ostream& out,
-                                           std::time_t tp,
-                                           const char* delem = "-");
-    UTIL_EXPORT std::string format_date (std::time_t tp,
-                                         const char* delem = "-");
-
-    UTIL_EXPORT std::ostream& format_date (std::ostream&,
-                                           time_point const& tp,
-                                           const char* delem = "-");
-
-    UTIL_EXPORT std::string format_date (time_point const& tp,
-                                         const char* delem = "-");
-
-    UTIL_EXPORT time_point parse_date (const std::string& s);
-    UTIL_EXPORT time_point parse_date (std::istream& in);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_duration (std::ostream&,
