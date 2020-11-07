@@ -86,10 +86,11 @@ namespace util {
       const int yday = w * 7;
       const auto t = tm2time_t(mktm(year, 1, yday));
       const auto tm = time_t2tm(t);
-      if (tm.tm_wday == 1) { // already monday
+      const auto wd = weekday_of(tm);
+      if (wd == 0) { // already monday
         return t;
       }
-      return tm2time_t(mktm(year_of(tm), 1, tm.tm_yday + 1 - weekday_of(tm)));
+      return tm2time_t(mktm(year_of(tm), 1, tm.tm_yday - wd + 1));
     }
 
     // --------------------------------------------------------------------------
