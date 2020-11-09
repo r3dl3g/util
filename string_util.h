@@ -215,6 +215,29 @@ namespace util {
 
   } // namespace utf8
 
+  namespace bom {
+    // --------------------------------------------------------------------------
+    struct utf_bom_t {
+      const static utf_bom_t no_utf;
+      const static utf_bom_t utf_8;
+      const static utf_bom_t utf_32le;
+      const static utf_bom_t utf_32be;
+      const static utf_bom_t utf_16le;
+      const static utf_bom_t utf_16be;
+
+      utf_bom_t (uint8_t s = 0, char c0 = 0, char c1 = 0, char c2 = 0, char c3 = 0);
+      utf_bom_t (std::istream&);
+
+      void read_utf_bom (std::istream& in);
+
+      uint8_t size;
+      char c[4];
+      bool operator== (const utf_bom_t& rhs) const;
+      bool operator!= (const utf_bom_t& rhs) const;
+    };
+
+  } // namespace bom
+
   namespace win32 {
 
     UTIL_EXPORT std::string get_system_error_message (uint32_t msg);

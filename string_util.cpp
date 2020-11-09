@@ -225,6 +225,61 @@ namespace util {
 
   } // utf8
 
+  namespace bom {
+
+    // --------------------------------------------------------------------------
+    const utf_bom_t utf_bom_t::no_utf;
+    const utf_bom_t utf_bom_t::utf_8 = { 3, '\xef', '\xbb', '\xbf' };
+    const utf_bom_t utf_bom_t::utf_32le = { 4, '\xff', '\xfe' };
+    const utf_bom_t utf_bom_t::utf_32be = { 4, 0, 0, '\xfe', '\xff' };
+    const utf_bom_t utf_bom_t::utf_16le = { 2, '\xff', '\xfe' };
+    const utf_bom_t utf_bom_t::utf_16be = { 2, '\xfe', '\xff' };
+    // --------------------------------------------------------------------------
+    namespace {
+      const utf_bom_t utf_boms[] = {
+        utf_bom_t::utf_8,
+        utf_bom_t::utf_32le,
+        utf_bom_t::utf_32be,
+        utf_bom_t::utf_16le,
+        utf_bom_t::utf_16be
+      };
+    }
+
+    // --------------------------------------------------------------------------
+    bool utf_bom_t::operator== (const utf_bom_t& rhs) const {
+      return (c[0] == rhs.c[0]) &&
+          (c[1] == rhs.c[1]) &&
+          ((size < 3) || (c[2] == rhs.c[2])) &&
+          ((size < 4) || (c[3] == rhs.c[3]));
+    }
+    // --------------------------------------------------------------------------
+    bool utf_bom_t::operator!= (const utf_bom_t& rhs) const {
+      return !operator==(rhs);
+    }
+    // --------------------------------------------------------------------------
+    utf_bom_t::utf_bom_t (uint8_t s, char c0, char c1, char c2, char c3)
+      : size(s)
+      , c{c0, c1, c2, c3}
+    {}
+    // --------------------------------------------------------------------------
+    utf_bom_t::utf_bom_t (std::istream& in) {
+      read_utf_bom(in);
+    }
+    // --------------------------------------------------------------------------
+    void utf_bom_t::read_utf_bom (std::istream& in) {
+      in.read(c, 4);
+      for (const utf_bom_t& utf_bom : utf_boms) {
+        if (utf_bom == *this) {
+          in.seekg(utf_bom.size);
+          *this = utf_bom;
+          return;
+        }
+      }
+      in.seekg(0);
+      *this = no_utf;
+    }
+  } // namespace bom
+
 #ifdef WIN32
 
   namespace win32 {

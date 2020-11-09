@@ -118,4 +118,11 @@ namespace util {
     return (i != e) ? *i : T();
   }
 
+  // --------------------------------------------------------------------------
+  template<typename T>
+  std::vector<T> slice (const std::vector<T>& v, std::size_t first = 0, std::size_t last = -1) {
+    const auto end = (last == -1) ? v.end() : v.begin() + last;
+    return std::vector<T>(v.begin() + first, end);
+  }
+
 } // namespace util
