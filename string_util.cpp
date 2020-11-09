@@ -270,8 +270,8 @@ namespace util {
       in.read(c, 4);
       for (const utf_bom_t& utf_bom : utf_boms) {
         if (utf_bom == *this) {
-          in.seekg(utf_bom.size);
-          *this = utf_bom;
+          size = utf_bom.size;
+          in.seekg(size);
           return;
         }
       }
