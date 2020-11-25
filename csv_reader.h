@@ -47,7 +47,16 @@ namespace util {
                                     std::function<void(const std::vector<std::string>&)> fn);
 
     // --------------------------------------------------------------------------
-    struct skip {};
+    struct skip {
+      bool operator== (const skip&) const {
+        return true;
+      }
+    };
+
+    // --------------------------------------------------------------------------
+    inline std::ostream& operator<< (std::ostream& o, util::csv::skip) {
+      return o;
+    }
 
     // --------------------------------------------------------------------------
     namespace detail {
@@ -110,14 +119,15 @@ namespace util {
           while ((ch == '\n') || (ch == '\r')) {
             ch = in.get();
           }
-          if (ignore) {
-            while ((ch != '\n') && (ch != '\r')) {
-              ch = in.get();
+          if (in.good()) {
+            if (ignore) {
+              while ((ch != -1) && (ch != '\n') && (ch != '\r')) {
+                ch = in.get();
+              }
+              ignore = false;
+            } else {
+              fn(detail::csv_tuple<Arguments...>::read(in, ch, delimiter));
             }
-            ignore = false;
-          } else {
-            fn(detail::csv_tuple<Arguments...>::read(in, ch, delimiter));
-            ch = in.get();
           }
         }
       }
