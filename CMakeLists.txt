@@ -71,6 +71,7 @@ if(NOT TARGET util-obj)
   set(INCLUDE_FILES bind_method.h
     blocking_queue.h
     command_line.h
+    csv_reader.h
     ostreamfmt.h
     ostream_resetter.h
     robbery.h
