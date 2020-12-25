@@ -26,7 +26,7 @@
 
 namespace util {
 
-  class ostream_resetter {
+  class UTIL_EXPORT ostream_resetter {
   public:
     inline ostream_resetter (std::ostream& out)
       : m_out(out)

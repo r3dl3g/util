@@ -48,7 +48,7 @@ namespace util {
 
     // --------------------------------------------------------------------------
     struct skip {
-      bool operator== (const skip&) const {
+      inline bool operator== (const skip&) const {
         return true;
       }
     };
@@ -61,9 +61,9 @@ namespace util {
     // --------------------------------------------------------------------------
     namespace detail {
 
-      void skip_text (std::istream& in, int& ch);
-      void skip_none_text (std::istream& in, int& ch, int splitChar);
-      void skip_entry (std::istream& in, int& ch, int splitChar);
+      UTIL_EXPORT void skip_text (std::istream& in, int& ch);
+      UTIL_EXPORT void skip_none_text (std::istream& in, int& ch, int splitChar);
+      UTIL_EXPORT void skip_entry (std::istream& in, int& ch, int splitChar);
 
       // --------------------------------------------------------------------------
       template<typename T>
@@ -74,7 +74,7 @@ namespace util {
       }
 
       template<>
-      skip csv_element<skip> (std::istream& in, int& ch, int splitChar);
+      UTIL_EXPORT skip csv_element<skip> (std::istream& in, int& ch, int splitChar);
 
 #ifdef CAN_CALL_VARIADIC_IN_ORDER
       template<typename ... Arguments>

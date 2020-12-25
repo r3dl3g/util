@@ -49,16 +49,16 @@ namespace util {
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
-    std::tm time_t2tm (const std::time_t now);
-    std::time_t tm2time_t (const std::tm& t);
-    std::time_t tm2time_t (std::tm&& t);
+    UTIL_EXPORT std::tm time_t2tm (const std::time_t now);
+    UTIL_EXPORT std::time_t tm2time_t (const std::tm& t);
+    UTIL_EXPORT std::time_t tm2time_t (std::tm&& t);
 
-    std::tm mktm (int year = 0, int month = 0, int day = 0,
-                  int hour = 0, int minute = 0, int second = 0);
+    UTIL_EXPORT std::tm mktm (int year = 0, int month = 0, int day = 0,
+                              int hour = 0, int minute = 0, int second = 0);
 
-    time_point mktime_point (int year = 0, int month = 0, int day = 0,
-                             int hour = 0, int minute = 0, int second = 0,
-                             int millis = 0);
+    UTIL_EXPORT time_point mktime_point (int year = 0, int month = 0, int day = 0,
+                                         int hour = 0, int minute = 0, int second = 0,
+                                         int millis = 0);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::tm local_time (time_point const& tp);

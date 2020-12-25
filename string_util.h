@@ -33,8 +33,8 @@
 //
 // Library includes
 //
-#include <util-export.h>
 #include <util/ostreamfmt.h>
+#include <util-export.h>
 
 /**
 * Provides an API to stream into OutputDebugString.
@@ -116,7 +116,7 @@ namespace util {
       std::string text;
     };
 
-    struct quoted_in {
+    struct UTIL_EXPORT quoted_in {
       inline quoted_in (std::string& t)
         : text(t)
       {}
@@ -155,7 +155,7 @@ namespace util {
 
 #endif
 
-    struct name_in {
+    struct UTIL_EXPORT name_in {
       name_in (std::string& t)
         : text(t)
       {}
@@ -217,7 +217,7 @@ namespace util {
 
   namespace bom {
     // --------------------------------------------------------------------------
-    struct utf_bom_t {
+    struct UTIL_EXPORT utf_bom_t {
       const static utf_bom_t no_utf;
       const static utf_bom_t utf_8;
       const static utf_bom_t utf_32le;

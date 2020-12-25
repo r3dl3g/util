@@ -44,7 +44,7 @@ namespace util {
       std::function<void(std::string)> action;
     };
 
-    struct parser {
+    struct UTIL_EXPORT parser {
       typedef std::vector<std::string> arg_list;
       typedef arg_list::const_iterator iterator;
 
