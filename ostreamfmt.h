@@ -28,4 +28,4 @@
 * Allows to use ostringstream formatting as one-line.
 * F.e.: ostreamfmt("Hello Word" << 2) produces a std:sstring with "Hello Word2".
 */
-#define ostreamfmt(a) static_cast<const std::ostringstream&>(std::ostringstream() << a).str()
+#define ostreamfmt(a) static_cast<const std::ostringstream&>(std::ostringstream() << a).str() // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
