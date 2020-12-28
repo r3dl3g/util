@@ -28,7 +28,6 @@
 //
 #include "time_util.h"
 #include "string_util.h"
-#include "ostreamfmt.h"
 #include "ostream_resetter.h"
 
 
@@ -41,7 +40,7 @@ namespace util {
 
     std::tm time_t2tm (const std::time_t now) {
       // --------------------------------------------------------------------------
-      std::tm t;
+      std::tm t{};
 #ifdef WIN32
       localtime_s(&t, &now);
 #else

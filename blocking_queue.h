@@ -33,12 +33,6 @@ namespace util {
   class blocking_queue {
   public:
 
-    /// Default constructor
-    blocking_queue () {}
-
-    /// Destructor
-    ~blocking_queue () {}
-
     /// Enqueue an item and send signal to a waiting dequeuer.
     void enqueue (const T& t) {
       {

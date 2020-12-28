@@ -48,7 +48,7 @@ namespace util {
       typedef std::vector<std::string> arg_list;
       typedef arg_list::const_iterator iterator;
 
-      parser (const std::string& app_name = {}, std::initializer_list<arg> args = {});
+      explicit parser (const std::string& app_name = {}, std::initializer_list<arg> args = {});
 
       void add (std::initializer_list<arg> args);
       void add (arg&& a);
@@ -59,7 +59,7 @@ namespace util {
       void show_help (std::ostream&);
 
     private:
-      void execute (const arg& cmd, const std::string& match, iterator& i, const iterator& e);
+      static void execute (const arg& cmd, const std::string& match, iterator& i, const iterator& e);
 
       std::string app_name;
       std::vector<arg> commands;

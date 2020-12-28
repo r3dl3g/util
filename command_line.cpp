@@ -60,7 +60,7 @@ namespace util {
     }
 
     void parser::process (const arg_list& args) {
-      for (iterator i = args.begin(), e = args.end(); i != e; ++i) {
+      for (auto i = args.begin(), e = args.end(); i != e; ++i) {
         bool found = false;
         for (const arg& cmd : commands) {
           if (util::string::starts_with(*i, cmd.short_cmd)) {

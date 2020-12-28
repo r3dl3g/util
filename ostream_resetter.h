@@ -28,7 +28,7 @@ namespace util {
 
   class UTIL_EXPORT ostream_resetter {
   public:
-    inline ostream_resetter (std::ostream& out)
+    inline explicit ostream_resetter (std::ostream& out)
       : m_out(out)
       , m_fill(out.fill())
       , m_width(out.width())

@@ -49,7 +49,7 @@ namespace util {
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
-    UTIL_EXPORT std::tm time_t2tm (const std::time_t now);
+    UTIL_EXPORT std::tm time_t2tm (std::time_t now);
     UTIL_EXPORT std::time_t tm2time_t (const std::tm& t);
     UTIL_EXPORT std::time_t tm2time_t (std::tm&& t);
 
@@ -232,7 +232,8 @@ namespace util {
     struct average_chronometer {
 
       inline average_chronometer ()
-        : count_ (0)
+        : count_(0)
+        , duration_{}
       {}
 
       inline void start () {

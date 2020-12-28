@@ -106,10 +106,15 @@ namespace util {
 #if __cplusplus <= 201103L
 
     struct quoted_out {
-      inline quoted_out (const std::string& t)
+      inline explicit quoted_out (const std::string& t)
         : text(t)
       {}
-      inline quoted_out (const char* t)
+
+      inline explicit quoted_out (std::string&& t)
+        : text(std::move(t))
+      {}
+
+      inline explicit quoted_out (const char* t)
         : text(t)
       {}
 
@@ -117,7 +122,7 @@ namespace util {
     };
 
     struct UTIL_EXPORT quoted_in {
-      inline quoted_in (std::string& t)
+      inline explicit quoted_in (std::string& t)
         : text(t)
       {}
 
@@ -156,7 +161,7 @@ namespace util {
 #endif
 
     struct UTIL_EXPORT name_in {
-      name_in (std::string& t)
+      explicit name_in (std::string& t)
         : text(t)
       {}
 
@@ -169,10 +174,10 @@ namespace util {
       return name_in(t);
     }
 
-    template<class _InIt, class _OutIt, class _Pr>
-    inline void copy_until (_InIt _First, _InIt _Last, _OutIt _Dest, _Pr _Pred) {
-      while ((_First != _Last) && _Pred(*_First)) {
-        *_Dest++ = *_First++;
+    template<class InIt, class OutIt, class Pr>
+    inline void copy_until (InIt first, InIt last, OutIt dest, Pr pred) {
+      while ((first != last) && pred(*first)) {
+        *dest++ = *first++;
       }
     }
 
@@ -225,8 +230,9 @@ namespace util {
       const static utf_bom_t utf_16le;
       const static utf_bom_t utf_16be;
 
-      utf_bom_t (uint8_t s = 0, char c0 = 0, char c1 = 0, char c2 = 0, char c3 = 0);
-      utf_bom_t (std::istream&);
+      utf_bom_t ();
+      utf_bom_t (uint8_t s, char c0, char c1, char c2 = 0, char c3 = 0);
+      explicit utf_bom_t (std::istream&);
 
       void read_utf_bom (std::istream& in);
 

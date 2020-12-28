@@ -88,7 +88,8 @@ namespace util {
       return list;
     }
 
-    void read_csv_data (std::istream& in, char delimiter, bool ignoreFirst, std::function<void(const std::vector<std::string>&)> fn) {
+    void read_csv_data (std::istream& in, char delimiter, bool ignoreFirst,
+                        const std::function<void(const std::vector<std::string>&)>& fn) {
       while (in.good()) {
         std::vector<std::string> line = parse_csv_line(in, delimiter);
         if (ignoreFirst) {

@@ -44,7 +44,7 @@ namespace util {
     UTIL_EXPORT std::string parse_entry (std::istream& in, int& ch, int splitChar = ';');
     UTIL_EXPORT std::vector<std::string> parse_csv_line (std::istream& in, int splitChar = ';');
     UTIL_EXPORT void read_csv_data (std::istream& in, char delimiter, bool ignoreFirst,
-                                    std::function<void(const std::vector<std::string>&)> fn);
+                                    const std::function<void(const std::vector<std::string>&)>& fn);
 
     // --------------------------------------------------------------------------
     struct skip {
