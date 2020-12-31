@@ -35,7 +35,7 @@
 #ifdef WIN32
 #define min min
 #define max max
-#include <Windows.h>
+#include <windows.h>
 #endif //WIN32
 
 
