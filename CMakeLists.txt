@@ -34,6 +34,10 @@ if(NOT TARGET util-obj)
     set (UTIL_LIBRARIES util)
   endif()
 
+  if(CMAKE_CXX_PLATFORM_ID STREQUAL "MinGW")
+    set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUSE_MINGW")
+  endif()
+
   get_directory_property(hasParent PARENT_DIRECTORY)
   if (hasParent)
     set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} PARENT_SCOPE)

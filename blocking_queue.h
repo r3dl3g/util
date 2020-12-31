@@ -22,9 +22,13 @@
 //
 // Common includes
 //
-#include <queue>
 #include <condition_variable>
 #include <mutex>
+#include <queue>
+#ifdef USE_MINGW
+#include <mingw/mingw.condition_variable.h>
+#include <mingw/mingw.mutex.h>
+#endif
 
 
 namespace util {
