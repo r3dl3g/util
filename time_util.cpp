@@ -162,7 +162,7 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
-#if (__cplusplus >= 201700L) || defined (BSD)
+#if (__cplusplus >= 201402L) || defined (BSD)
     std::string format_datetime (file_time_point const& ftp,
                                  const char* date_delem,
                                  const char* separator,
