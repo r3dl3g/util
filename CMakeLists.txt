@@ -41,7 +41,7 @@ if(NOT TARGET util)
   endif (APPLE)
 
   if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set (UTIL_SYS_LIBRARIES stdc++fs pthread)
+    set (UTIL_SYS_LIBRARIES pthread)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set (UTIL_SYS_LIBRARIES stdc++fs pthread)
   endif()
