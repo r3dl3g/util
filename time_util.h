@@ -24,7 +24,7 @@
 //
 #include <string>
 #include <chrono>
-#include <iosfwd>
+#include <sstream>
 
 // --------------------------------------------------------------------------
 //
