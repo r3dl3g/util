@@ -43,7 +43,7 @@ namespace util {
 
     // --------------------------------------------------------------------------
     using time_point = std::chrono::system_clock::time_point;
-#if (__cplusplus >= 201700L) || defined (BSD)
+#if (USE_FILE_TIME_POINT)
     using file_time_point = sys_fs::file_time_type;
 #endif
     using duration = std::chrono::system_clock::duration;
@@ -161,7 +161,7 @@ namespace util {
                                              bool add_millis = false);
 
     // --------------------------------------------------------------------------
-#if (__cplusplus >= 201700L) || defined (BSD)
+#if (USE_FILE_TIME_POINT)
     UTIL_EXPORT std::string format_datetime (file_time_point const& tp,
                                              const char* year_delem = "-",
                                              const char* separator = " ",
@@ -265,9 +265,9 @@ namespace util {
       }
 
     private:
-      chronometer timer_;
-      chronometer::duration duration_;
       std::size_t count_;
+      chronometer::duration duration_;
+      chronometer timer_;
     };
 
     // --------------------------------------------------------------------------

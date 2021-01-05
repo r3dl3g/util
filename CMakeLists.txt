@@ -8,6 +8,7 @@ include (GenerateExportHeader)
 
 option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
 option(UTIL_STANDALONE_BUILD "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
+option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
 
 if(NOT TARGET util-obj)
 
@@ -38,12 +39,17 @@ if(NOT TARGET util-obj)
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUSE_MINGW")
   endif()
 
+  if (UTIL_CXX_STANDARD STREQUAL "OFF")
+    set (UTIL_CXX_STANDARD 17)
+  endif ()
+
   get_directory_property(hasParent PARENT_DIRECTORY)
   if (hasParent)
     set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} PARENT_SCOPE)
     set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} PARENT_SCOPE)
     set (UTIL_LIBRARIES ${UTIL_LIBRARIES} PARENT_SCOPE)
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} PARENT_SCOPE)
+    set (UTIL_CXX_STANDARD ${UTIL_CXX_STANDARD} PARENT_SCOPE)
   else()
     set (UTIL_STANDALONE_BUILD On)
   endif()
@@ -51,6 +57,7 @@ if(NOT TARGET util-obj)
   message(STATUS "UTIL_CXX_FLAGS: ${UTIL_CXX_FLAGS}")
   message(STATUS "UTIL_LIBRARIES: ${UTIL_LIBRARIES}")
   message(STATUS "UTIL_SYS_LIBRARIES: ${UTIL_SYS_LIBRARIES}")
+  message(STATUS "UTIL_CXX_STANDARD: ${UTIL_CXX_STANDARD}")
 
   set (UTIL_VERSION_MAJOR 1)
   set (UTIL_VERSION_MINOR 0)
@@ -100,7 +107,7 @@ if(NOT TARGET util-obj)
   set_target_properties(util-obj PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     FOLDER libraries
-    CXX_STANDARD 11)
+    CXX_STANDARD ${UTIL_CXX_STANDARD})
 
   if(UTIL_BUILD_STATIC_MODULE_LIB)
     add_library(util-static STATIC $<TARGET_OBJECTS:util-obj>)

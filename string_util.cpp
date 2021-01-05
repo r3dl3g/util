@@ -167,6 +167,7 @@ namespace util {
       return s;
     }
 
+#if !defined(__cpp_lib_quoted_string_io)
     UTIL_EXPORT std::ostream& operator<< (std::ostream& os, const quoted_out& q) {
       os << '\"' << util::string::replaced(q.text, "\"", "\\\"") << '\"';
       return os;
@@ -182,6 +183,7 @@ namespace util {
       replace(q.text, "\\\"", "\"");
       return is;
     }
+#endif
 
     std::istream& operator>> (std::istream& is, name_in&& n) {
       std::ostringstream str;

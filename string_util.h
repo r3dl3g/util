@@ -103,7 +103,21 @@ namespace util {
     UTIL_EXPORT std::string replaced (std::string s, const std::string& from, const std::string& to);
     UTIL_EXPORT std::string replaced (std::string s, const char* from, const char* to);
 
-#if __cplusplus <= 201103L
+#if defined(__cpp_lib_quoted_string_io)
+
+    inline auto quoted (const std::string& t) {
+      return std::quoted(t);
+    }
+
+    inline auto quoted (const char* t) {
+      return std::quoted(t);
+    }
+
+    inline auto quoted (std::string& t) {
+      return std::quoted(t);
+    }
+
+#else
 
     struct quoted_out {
       inline explicit quoted_out (const std::string& t)
@@ -142,20 +156,6 @@ namespace util {
 
     inline quoted_in quoted (std::string& t) {
       return quoted_in(t);
-    }
-
-#else
-
-    inline auto quoted (const std::string& t) {
-      return std::quoted(t);
-    }
-
-    inline auto quoted (const char* t) {
-      return std::quoted(t);
-    }
-
-    inline auto quoted (std::string& t) {
-      return std::quoted(t);
     }
 
 #endif
