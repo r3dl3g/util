@@ -6,11 +6,28 @@ project("util" CXX)
 
 include (GenerateExportHeader)
 
+cmake_policy(SET CMP0077 NEW)
+
 option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
 option(UTIL_STANDALONE_BUILD "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
 option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
 
+function(DebugPrint MSG)
+  if(VERBOSE)
+    message(STATUS "${MSG}")
+  endif()
+endfunction(DebugPrint)
+
 if(NOT TARGET util)
+
+  set (UTIL_VERSION_MAJOR 1)
+  set (UTIL_VERSION_MINOR 0)
+  set (UTIL_VERSION_PATCH 2)
+  set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
+
+  if (UTIL_CXX_STANDARD STREQUAL "OFF")
+    set (UTIL_CXX_STANDARD 17)
+  endif ()
 
   set (UTIL_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/..
@@ -29,21 +46,19 @@ if(NOT TARGET util)
     set (UTIL_SYS_LIBRARIES stdc++fs pthread)
   endif()
 
+  set (UTIL_LIBRARIES util)
+
   if (UTIL_BUILD_STATIC_MODULE_LIB)
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUTIL_BUILT_AS_STATIC_LIB")
     set (UTIL_LINK STATIC)
   else ()
     set (UTIL_LINK SHARED)
   endif()
-  set (UTIL_LIBRARIES util)
 
   if(CMAKE_CXX_PLATFORM_ID STREQUAL "MinGW")
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUSE_MINGW")
+    set (LOGGING_SYS_LIBRARIES stdc++fs pthread)
   endif()
-
-  if (UTIL_CXX_STANDARD STREQUAL "OFF")
-    set (UTIL_CXX_STANDARD 17)
-  endif ()
 
   get_directory_property(hasParent PARENT_DIRECTORY)
   if (hasParent)
@@ -56,15 +71,10 @@ if(NOT TARGET util)
     set (UTIL_STANDALONE_BUILD On)
   endif()
 
-  message(STATUS "UTIL_CXX_FLAGS: ${UTIL_CXX_FLAGS}")
-  message(STATUS "UTIL_LIBRARIES: ${UTIL_LIBRARIES}")
-  message(STATUS "UTIL_SYS_LIBRARIES: ${UTIL_SYS_LIBRARIES}")
-  message(STATUS "UTIL_CXX_STANDARD: ${UTIL_CXX_STANDARD}")
-
-  set (UTIL_VERSION_MAJOR 1)
-  set (UTIL_VERSION_MINOR 0)
-  set (UTIL_VERSION_PATCH 2)
-  set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
+  DebugPrint("UTIL_CXX_FLAGS: ${UTIL_CXX_FLAGS}")
+  DebugPrint("UTIL_LIBRARIES: ${UTIL_LIBRARIES}")
+  DebugPrint("UTIL_SYS_LIBRARIES: ${UTIL_SYS_LIBRARIES}")
+  DebugPrint("UTIL_CXX_STANDARD: ${UTIL_CXX_STANDARD}")
 
   set (UTIL_INCLUDE_INSTALL_DIR include/util)
   set (UTIL_LIBRARY_INSTALL_DIR lib)
@@ -103,6 +113,7 @@ if(NOT TARGET util)
   set(CMAKE_DEBUG_POSTFIX d)
 
   add_definitions(-Dutil_EXPORTS ${UTIL_CXX_FLAGS})
+
   add_library(util ${UTIL_LINK} ${SOURCE_FILES} ${INCLUDE_FILES})
 
   set_target_properties(util PROPERTIES
@@ -110,14 +121,16 @@ if(NOT TARGET util)
     FOLDER libraries
     CXX_STANDARD ${UTIL_CXX_STANDARD})
 
-  if(!UTIL_BUILD_STATIC_MODULE_LIB)
+  if(UTIL_BUILD_STATIC_MODULE_LIB)
+    DebugPrint("UTIL: Create static Library")
+  else()
+    DebugPrint("UTIL: Create shared Library")
 
     target_link_libraries(util PRIVATE ${UTIL_SYS_LIBRARIES})
 
     set_target_properties(util PROPERTIES
       VERSION ${UTIL_VERSION}
       SOVERSION ${UTIL_VERSION_MAJOR})
-
   endif()
 
   if (UTIL_STANDALONE_BUILD)
