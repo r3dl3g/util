@@ -20,6 +20,7 @@ if(NOT TARGET util-obj)
 
   if (APPLE)
     set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} /usr/local/include)
+    set (UTIL_CXX_FLAGS "-DUSE_FILE_TIME_POINT")
   endif (APPLE)
 
   if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -30,7 +31,7 @@ if(NOT TARGET util-obj)
 
   if (UTIL_BUILD_STATIC_MODULE_LIB)
     set (UTIL_LIBRARIES util-static)
-    set (UTIL_CXX_FLAGS "-DUTIL_BUILT_AS_STATIC_LIB")
+    set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUTIL_BUILT_AS_STATIC_LIB")
   else()
     set (UTIL_LIBRARIES util)
   endif()
