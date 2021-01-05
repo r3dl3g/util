@@ -10,7 +10,7 @@ option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this modul
 option(UTIL_STANDALONE_BUILD "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
 option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
 
-if(NOT TARGET util-obj)
+if(NOT TARGET util)
 
   set (UTIL_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/..
@@ -30,11 +30,12 @@ if(NOT TARGET util-obj)
   endif()
 
   if (UTIL_BUILD_STATIC_MODULE_LIB)
-    set (UTIL_LIBRARIES util-static)
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUTIL_BUILT_AS_STATIC_LIB")
-  else()
-    set (UTIL_LIBRARIES util)
+    set (UTIL_LINK STATIC)
+  else ()
+    set (UTIL_LINK SHARED)
   endif()
+  set (UTIL_LIBRARIES util)
 
   if(CMAKE_CXX_PLATFORM_ID STREQUAL "MinGW")
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUSE_MINGW")
@@ -101,37 +102,29 @@ if(NOT TARGET util-obj)
 
   set(CMAKE_DEBUG_POSTFIX d)
 
-  add_definitions(-DEXPERIMENTAL -Dutil_obj_EXPORTS ${UTIL_CXX_FLAGS})
+  add_definitions(-Dutil_EXPORTS ${UTIL_CXX_FLAGS})
+  add_library(util ${UTIL_LINK} ${SOURCE_FILES} ${INCLUDE_FILES})
 
-  add_library(util-obj OBJECT ${SOURCE_FILES} ${INCLUDE_FILES})
-
-  set_target_properties(util-obj PROPERTIES
+  set_target_properties(util PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     FOLDER libraries
     CXX_STANDARD ${UTIL_CXX_STANDARD})
 
-  if(UTIL_BUILD_STATIC_MODULE_LIB)
-    add_library(util-static STATIC $<TARGET_OBJECTS:util-obj>)
-    if (UTIL_STANDALONE_BUILD)
-      install(TARGETS util-static DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
-    endif()
-  else()
-    add_library(util SHARED $<TARGET_OBJECTS:util-obj>)
+  if(!UTIL_BUILD_STATIC_MODULE_LIB)
 
     target_link_libraries(util PRIVATE ${UTIL_SYS_LIBRARIES})
 
     set_target_properties(util PROPERTIES
-      POSITION_INDEPENDENT_CODE ON
-      FOLDER libraries
       VERSION ${UTIL_VERSION}
       SOVERSION ${UTIL_VERSION_MAJOR})
 
-    if (UTIL_STANDALONE_BUILD)
-      install(TARGETS util DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
-    endif()
   endif()
 
-  GENERATE_EXPORT_HEADER(util-obj
+  if (UTIL_STANDALONE_BUILD)
+    install(TARGETS util DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
+  endif()
+
+  GENERATE_EXPORT_HEADER(util
     BASE_NAME UTIL
     EXPORT_MACRO_NAME UTIL_EXPORT
     EXPORT_FILE_NAME util-export.h
