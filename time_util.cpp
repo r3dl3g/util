@@ -59,7 +59,7 @@ namespace util {
     }
 
     std::tm mktm (int year, int month, int day, int hour, int minute, int second) {
-      return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0 };
+      return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0, 0, 0 };
     }
 
     time_point mktime_point (int year, int month, int day, int hour, int minute, int second, int millis) {
@@ -168,8 +168,13 @@ namespace util {
                                  const char* separator,
                                  const char* time_delem,
                                  bool add_millis) {
-      std::time_t now = file_time_point::clock::to_time_t(ftp);
-      auto tp = std::chrono::system_clock::from_time_t(now);
+#if WIN32
+      const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
+      const time_point tp = time_point(time_point::duration(tse));
+#else
+      std::time_t tt = file_time_point::clock::to_time_t(ftp);
+      const auto tp = std::chrono::system_clock::from_time_t(tt);
+#endif
       return format_datetime(tp, date_delem, separator, time_delem, add_millis);
     }
 #endif
