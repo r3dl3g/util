@@ -38,12 +38,12 @@ namespace util {
       return order(static_cast<unsigned char>(lhs) - static_cast<unsigned char>(rhs));
     }
 
-    inline order operator~ (order lhs) {
-      return order(!static_cast<bool>(lhs));
+    inline order operator! (order lhs) {
+      return order::up == lhs ? order::down : order::up;
     }
 
-    inline order operator! (order lhs) {
-      return order(!static_cast<bool>(lhs));
+    inline order operator~ (order lhs) {
+      return operator!(lhs);
     }
 
   } // namespace sort
