@@ -46,14 +46,14 @@ if(NOT TARGET util)
   endif()
 
   if(APPLE)
-    set (UTIL_SYS_LIBRARIES pthread)
+    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} pthread)
     set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} /usr/local/include)
     if (CLANG_VERSION_MAJOR GREATER 10)
       set (UTIL_CXX_FLAGS "-DUSE_FILE_TIME_POINT")
     endif ()
   elseif ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR 
           ((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") AND NOT (CMAKE_CXX_PLATFORM_ID STREQUAL "Windows")))
-    set (LOGGING_SYS_LIBRARIES stdc++fs pthread)
+    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} stdc++fs pthread)
   endif()
 
   if (WIN32)
@@ -72,7 +72,7 @@ if(NOT TARGET util)
 
   if(CMAKE_CXX_PLATFORM_ID STREQUAL "MinGW")
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} "-DUSE_MINGW")
-    set (LOGGING_SYS_LIBRARIES stdc++fs pthread)
+    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} stdc++fs pthread)
   endif()
 
   get_directory_property(hasParent PARENT_DIRECTORY)
