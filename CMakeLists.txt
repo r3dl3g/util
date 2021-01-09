@@ -39,10 +39,18 @@ if(NOT TARGET util)
     ${PROJECT_BINARY_DIR}
     )
 
+  if (GUIPP_USE_BOOST)
+    find_package(Boost 1.66 REQUIRED COMPONENTS filesystem)
+    set (UTIL_CXX_FLAGS "-DUSE_BOOST")
+    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} Boost::filesystem)
+  endif()
+
   if(APPLE)
-    set (UTIL_CXX_FLAGS "-DUSE_FILE_TIME_POINT")
     set (UTIL_SYS_LIBRARIES pthread)
     set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} /usr/local/include)
+    if (CLANG_VERSION_MAJOR GREATER 10)
+      set (UTIL_CXX_FLAGS "-DUSE_FILE_TIME_POINT")
+    endif ()
   elseif ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR 
           ((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") AND NOT (CMAKE_CXX_PLATFORM_ID STREQUAL "Windows")))
     set (LOGGING_SYS_LIBRARIES stdc++fs pthread)
