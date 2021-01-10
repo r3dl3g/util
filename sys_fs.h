@@ -33,14 +33,13 @@
 #if defined __has_include
 print_sys_fs_msg("c++ has include")
 
-# if __has_include(<experimental/filesystem>)
-print_sys_fs_msg("c++ has include experimental/filesystem")
-
-#  define has_experimental_filesystem 1
-
-# elif __has_include(<filesystem>)
+# if __has_include(<filesystem>)
 print_sys_fs_msg("c++ has include filesystem")
 #  define has_filesystem 1
+
+# elif __has_include(<experimental/filesystem>)
+print_sys_fs_msg("c++ has include experimental/filesystem")
+#  define has_experimental_filesystem 1
 
 # elif __has_include(<boost/filesystem.hpp>)
 print_sys_fs_msg("c++ has include boost:filesystem")
