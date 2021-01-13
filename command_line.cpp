@@ -74,7 +74,7 @@ namespace util {
           }
         }
         if (!found) {
-          throw std::invalid_argument(ostreamfmt("Unknown argument: " << *i));
+          remaining.push_back(*i);
         }
       }
     }

@@ -58,11 +58,16 @@ namespace util {
 
       void show_help (std::ostream&);
 
+      inline const arg_list& remaining_args () const {
+        return remaining;
+      }
+
     private:
       static void execute (const arg& cmd, const std::string& match, iterator& i, const iterator& e);
 
       std::string app_name;
       std::vector<arg> commands;
+      arg_list remaining;
     };
 
   } // namespace command_line
