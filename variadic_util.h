@@ -30,12 +30,12 @@ namespace util {
 
   template <typename T0, typename... T>
   struct variadic_element<0, T0, T...> {
-    typedef T0 type;
+    using type = T0;
   };
 
   template <int N, typename T0, typename... T>
   struct variadic_element<N, T0, T...> {
-    typedef typename variadic_element<N - 1, T...>::type type;
+    using type = typename variadic_element<N - 1, T...>::type;
   };
 
 } // namespace util
