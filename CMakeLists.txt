@@ -40,7 +40,7 @@ if(NOT TARGET util)
     )
 
   if (GUIPP_USE_BOOST)
-    find_package(Boost 1.66 REQUIRED COMPONENTS filesystem)
+    find_package(Boost 1.65 REQUIRED COMPONENTS filesystem)
     set (UTIL_CXX_FLAGS "-DUSE_BOOST")
     set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} Boost::filesystem)
   endif()
