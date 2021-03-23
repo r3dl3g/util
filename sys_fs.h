@@ -29,6 +29,13 @@
 # define print_sys_fs_msg(A)
 #endif
 
+#ifdef ANDROID
+
+#include <ghc/filesystem.hpp>
+namespace sys_fs = ghc::filesystem;
+
+#else
+
 // Use c++ feature checking
 #if defined __has_include
 print_sys_fs_msg("c++ has include")
@@ -103,5 +110,7 @@ namespace boost {
 #else
 
 print_sys_fs_msg("No C++ filesystem available")
+
+#endif
 
 #endif
