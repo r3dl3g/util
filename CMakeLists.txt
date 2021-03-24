@@ -124,7 +124,9 @@ if(NOT TARGET util)
     vector_util.h
   )
 
-  set(CMAKE_DEBUG_POSTFIX d)
+  if (NOT ANDROID)
+    set(CMAKE_DEBUG_POSTFIX d)
+  endif ()
 
   add_definitions(-Dutil_EXPORTS ${UTIL_CXX_FLAGS})
 
