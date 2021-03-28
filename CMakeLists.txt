@@ -5,6 +5,8 @@ project("util" CXX)
 # see: http://stackoverflow.com/questions/23684789/cmake-build-multiple-executables-in-one-project-with-static-library
 
 include (GenerateExportHeader)
+include (CMakePackageConfigHelpers)
+include (GNUInstallDirs)
 
 if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
@@ -155,15 +157,40 @@ if(NOT TARGET util)
     STATIC_DEFINE UTIL_BUILT_AS_STATIC_LIB
   )
 
-  set (UTIL_INCLUDE_INSTALL_DIR include/util)
-  set (UTIL_LIBRARY_INSTALL_DIR lib)
-
   if (UTIL_STANDALONE_BUILD)
-    install(TARGETS util DESTINATION ${UTIL_LIBRARY_INSTALL_DIR})
+    set (INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/util)
+    set (LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/util)
+
+    target_include_directories(util
+                               PUBLIC
+                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+                               "$<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>"
+    )
+
+    write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake
+                                     VERSION ${UTIL_VERSION}
+                                     COMPATIBILITY SameMajorVersion)
+
+    install(TARGETS util
+            EXPORT utilTargets
+            LIBRARY DESTINATION ${LIBRARY_INSTALL_DIR}
+            ARCHIVE DESTINATION ${LIBRARY_INSTALL_DIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            INCLUDES DESTINATION ${INCLUDE_INSTALL_DIR}
+    )
+
     install(FILES ${INCLUDE_FILES}
-      ${PROJECT_BINARY_DIR}/util-export.h
-      ${PROJECT_BINARY_DIR}/util_version.h
-      DESTINATION ${UTIL_INCLUDE_INSTALL_DIR})
+            ${PROJECT_BINARY_DIR}/util-export.h
+            ${PROJECT_BINARY_DIR}/util_version.h
+            DESTINATION ${INCLUDE_INSTALL_DIR}
+    )
+
+    install(EXPORT utilTargets
+            FILE utilTargets.cmake
+            NAMESPACE util::
+            DESTINATION ${LIBRARY_INSTALL_DIR}/cmake
+    )
+
   endif()
 
 endif()
