@@ -13,7 +13,7 @@ if(POLICY CMP0077)
 endif()
 
 option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
-option(UTIL_STANDALONE_BUILD "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
+option(UTIL_CONFIG_INSTALL "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
 option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
 
 function(DebugPrint MSG)
@@ -89,7 +89,7 @@ if(NOT TARGET util)
     set (UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} PARENT_SCOPE)
     set (UTIL_CXX_STANDARD ${UTIL_CXX_STANDARD} PARENT_SCOPE)
   else()
-    set (UTIL_STANDALONE_BUILD On)
+    set (UTIL_CONFIG_INSTALL On)
   endif()
 
   DebugPrint("UTIL_CXX_FLAGS: ${UTIL_CXX_FLAGS}")
@@ -157,9 +157,9 @@ if(NOT TARGET util)
     STATIC_DEFINE UTIL_BUILT_AS_STATIC_LIB
   )
 
-  if (UTIL_STANDALONE_BUILD)
+  if (UTIL_CONFIG_INSTALL)
     set (INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/util)
-    set (LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/util)
+    set (LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/util)
 
     target_include_directories(util
                                PUBLIC
@@ -173,8 +173,8 @@ if(NOT TARGET util)
 
     install(TARGETS util
             EXPORT utilTargets
-            LIBRARY DESTINATION ${LIBRARY_INSTALL_DIR}
-            ARCHIVE DESTINATION ${LIBRARY_INSTALL_DIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             INCLUDES DESTINATION ${INCLUDE_INSTALL_DIR}
     )
@@ -188,7 +188,7 @@ if(NOT TARGET util)
     install(EXPORT utilTargets
             FILE utilTargets.cmake
             NAMESPACE util::
-            DESTINATION ${LIBRARY_INSTALL_DIR}/cmake
+            DESTINATION ${LIBRARY_INSTALL_DIR}
     )
 
   endif()
