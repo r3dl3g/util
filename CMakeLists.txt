@@ -171,6 +171,10 @@ if(NOT TARGET util)
                                      VERSION ${UTIL_VERSION}
                                      COMPATIBILITY SameMajorVersion)
 
+    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+                                  "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
+                                  INSTALL_DESTINATION ${LIBRARY_INSTALL_DIR})
+
     install(TARGETS util
             EXPORT utilTargets
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -190,6 +194,13 @@ if(NOT TARGET util)
             NAMESPACE util::
             DESTINATION ${LIBRARY_INSTALL_DIR}
     )
+
+    export(TARGETS util FILE utilTargets.cmake)
+
+    install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake"
+            DESTINATION ${LIBRARY_INSTALL_DIR})
 
   endif()
 
