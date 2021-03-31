@@ -29,7 +29,7 @@ if(NOT TARGET util)
   set (UTIL_VERSION_PATCH 3)
   set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
 
-  set (UTIL_LIBRARIES util)
+  set (UTIL_LIBRARIES util::util)
 
   if (UTIL_CXX_STANDARD STREQUAL "OFF")
     set (UTIL_CXX_STANDARD 17)
@@ -37,7 +37,7 @@ if(NOT TARGET util)
 
   set (UTIL_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/..
-    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/..
     ${PROJECT_BINARY_DIR}
     )
 
@@ -133,6 +133,7 @@ if(NOT TARGET util)
   add_definitions(-Dutil_EXPORTS ${UTIL_CXX_FLAGS})
 
   add_library(util ${UTIL_LINK} ${SOURCE_FILES} ${INCLUDE_FILES})
+  add_library(util::util ALIAS util)
 
   set_target_properties(util PROPERTIES
     POSITION_INDEPENDENT_CODE ON

@@ -30,7 +30,7 @@
 //
 // Library includes
 //
-#include <util-export.h>
+#include <util/util-export.h>
 #include "sys_fs.h"
 
 
