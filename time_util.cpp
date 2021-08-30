@@ -171,9 +171,19 @@ namespace util {
 #if WIN32
       const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
       const time_point tp = time_point(time_point::duration(tse));
-#else
+#elif __cplusplus > 201703L // C++20
+      const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(ftp);
+      const time_point tp = std::chrono::system_clock::to_time_t(systemTime);
+#elif __cplusplus < 201401L
+      // this is gcc 5.1 or greater
       std::time_t tt = file_time_point::clock::to_time_t(ftp);
       const auto tp = std::chrono::system_clock::from_time_t(tt);
+#else
+      using namespace std::chrono;
+      auto sctp = time_point_cast<system_clock::duration>(ftp - file_time_point::clock::now()
+                  + system_clock::now());
+      const auto tse = system_clock::to_time_t(sctp);
+      const time_point tp = time_point(time_point::duration(tse));
 #endif
       return format_datetime(tp, date_delem, separator, time_delem, add_millis);
     }
