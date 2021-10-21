@@ -29,7 +29,20 @@
 # define print_sys_fs_msg(A)
 #endif
 
-#ifdef ANDROID
+#if defined USE_BOOST
+print_sys_fs_msg("c++ include boost/filesystem.hpp")
+# include <boost/filesystem.hpp>
+
+print_sys_fs_msg("c++ use boost::filesystem")
+namespace sys_fs = boost::filesystem;
+
+namespace boost {
+  namespace filesystem {
+    typedef time_t file_time_type;
+  }
+}
+
+#elif defined ANDROID
 
 #include <ghc/filesystem.hpp>
 namespace sys_fs = ghc::filesystem;
@@ -93,19 +106,6 @@ print_sys_fs_msg("c++ include experimental/filesystem")
 
 print_sys_fs_msg("c++ use std::experimental::filesystem")
 namespace sys_fs = std::experimental::filesystem;
-
-#elif defined USE_BOOST
-print_sys_fs_msg("c++ include boost/filesystem.hpp")
-# include <boost/filesystem.hpp>
-
-print_sys_fs_msg("c++ use boost::filesystem")
-namespace sys_fs = boost::filesystem;
-
-namespace boost {
-  namespace filesystem {
-    typedef time_t file_time_type;
-  }
-}
 
 #else
 
