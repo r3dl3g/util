@@ -105,12 +105,12 @@ namespace util {
       return out;
     }
 
-    std::string format_datetime (time_point const& tp,
+    std::string format_datetime (const std::tm& t,
                                  const char* date_delem,
                                  const char* separator,
                                  const char* time_delem) {
       std::ostringstream strm;
-      format_datetime(strm, tp, date_delem, separator, time_delem);
+      format_datetime(strm, t, date_delem, separator, time_delem);
       return strm.str();
     }
 
