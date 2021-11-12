@@ -196,6 +196,16 @@ namespace util {
                                              const char* time_delem = ":",
                                              bool add_millis = false);
 
+    UTIL_EXPORT std::string format_duration_mt (duration const& d,
+                                                int hours_per_mt = 8,
+                                                const char* separator = " ",
+                                                const char* time_delem = ":",
+                                                bool add_millis = false);
+
+    UTIL_EXPORT std::string format_duration_only_h (duration const& d,
+                                                    const char* time_delem = ":",
+                                                    bool add_millis = false);
+
     UTIL_EXPORT duration parse_duration (const std::string& s);
     UTIL_EXPORT duration parse_duration (std::istream& in);
 

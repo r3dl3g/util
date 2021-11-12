@@ -1,5 +1,5 @@
 
-builddir=build/$(c++ --version | { read first rest ; echo $first ; })$(c++ -dumpversion)
+builddir=~/Projekte/build/ibr/util/$(c++ --version | { read first rest ; echo $first ; })$(c++ -dumpversion)
 prjdir=$PWD
 
 build () {

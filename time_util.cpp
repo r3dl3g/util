@@ -386,6 +386,26 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
+    std::string format_duration_mt (duration const& d,
+                                    int hours_per_mt,
+                                    const char* separator,
+                                    const char* time_delem,
+                                    bool add_millis) {
+      std::ostringstream strm;
+      format_duration_mt(strm, d, hours_per_mt, separator, time_delem, add_millis);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
+    std::string format_duration_only_h (duration const& d,
+                                        const char* time_delem,
+                                        bool add_millis) {
+      std::ostringstream strm;
+      format_duration_only_h(strm, d, time_delem, add_millis);
+      return strm.str();
+    }
+
+    // --------------------------------------------------------------------------
     duration parse_duration (const std::string& s) {
       std::istringstream strm(s);
       return parse_duration(strm);
