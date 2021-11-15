@@ -319,7 +319,8 @@ namespace util {
                                       int hours_per_mt,
                                       const char* separator,
                                       const char* time_delem,
-                                      bool add_millis) {
+                                      bool add_millis,
+                                      bool minimize) {
       ostream_resetter r(out);
 
       auto t0 = std::chrono::duration_cast<std::chrono::seconds>(d);
@@ -330,10 +331,24 @@ namespace util {
       t = (t - min) / 60;
       auto hours = t % hours_per_mt;
       auto days = (t - hours) / hours_per_mt;
-      out << days << separator << std::setfill('0')
-          << std::setw(2) << hours << time_delem
-          << std::setw(2) << min << time_delem
-          << std::setw(2) << secs;
+      bool has_prefix = !minimize;
+      if (days || has_prefix) {
+        out << days << separator;
+        has_prefix = true;
+      }
+      out << std::setfill('0');
+      if (hours || has_prefix) {
+        out << std::setw(2) << hours << time_delem;
+        has_prefix = true;
+      }
+      if (min || has_prefix) {
+        out << std::setw(2) << min << time_delem;
+        has_prefix = true;
+      }
+      if (has_prefix) {
+        out << std::setw(2);
+      }
+      out << secs;
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
@@ -346,7 +361,8 @@ namespace util {
     std::ostream& format_duration_only_h (std::ostream& out,
                                           duration const& d,
                                           const char* time_delem,
-                                          bool add_millis) {
+                                          bool add_millis,
+                                          bool minimize) {
       ostream_resetter r(out);
 
       auto t0 = std::chrono::duration_cast<std::chrono::seconds>(d);
@@ -355,10 +371,20 @@ namespace util {
       t = (t - secs) / 60;
       auto min = t % 60;
       auto hours = (t - min) / 60;
-      out << std::setfill('0')
-          << std::setw(2) << hours << time_delem
-          << std::setw(2) << min << time_delem
-          << std::setw(2) << secs;
+      out << std::setfill('0');
+      bool has_prefix = !minimize;
+      if (hours || has_prefix) {
+        out << std::setw(2) << hours << time_delem;
+        has_prefix = true;
+      }
+      if (min || has_prefix) {
+        out << std::setw(2) << min << time_delem;
+        has_prefix = true;
+      }
+      if (has_prefix) {
+        out << std::setw(2);
+      }
+      out << secs;
       if (add_millis) {
         auto tp = std::chrono::duration_cast<std::chrono::microseconds>(d);
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp - t0);
@@ -371,17 +397,19 @@ namespace util {
                                    duration const& d,
                                    const char* separator,
                                    const char* time_delem,
-                                   bool add_millis) {
-      return format_duration_mt(out, d, 24, separator, time_delem, add_millis);
+                                   bool add_millis,
+                                   bool minimize) {
+      return format_duration_mt(out, d, 24, separator, time_delem, add_millis, minimize);
     }
 
     // --------------------------------------------------------------------------
     std::string format_duration (duration const& d,
                                  const char* separator,
                                  const char* time_delem,
-                                 bool add_millis) {
+                                 bool add_millis,
+                                 bool minimize) {
       std::ostringstream strm;
-      format_duration(strm, d, separator, time_delem, add_millis);
+      format_duration(strm, d, separator, time_delem, add_millis, minimize);
       return strm.str();
     }
 
@@ -390,18 +418,20 @@ namespace util {
                                     int hours_per_mt,
                                     const char* separator,
                                     const char* time_delem,
-                                    bool add_millis) {
+                                    bool add_millis,
+                                    bool minimize) {
       std::ostringstream strm;
-      format_duration_mt(strm, d, hours_per_mt, separator, time_delem, add_millis);
+      format_duration_mt(strm, d, hours_per_mt, separator, time_delem, add_millis, minimize);
       return strm.str();
     }
 
     // --------------------------------------------------------------------------
     std::string format_duration_only_h (duration const& d,
                                         const char* time_delem,
-                                        bool add_millis) {
+                                        bool add_millis,
+                                        bool minimize) {
       std::ostringstream strm;
-      format_duration_only_h(strm, d, time_delem, add_millis);
+      format_duration_only_h(strm, d, time_delem, add_millis, minimize);
       return strm.str();
     }
 
