@@ -218,6 +218,35 @@ namespace util {
     UTIL_EXPORT std::size_t get_left_char (const std::string& s, std::size_t pos);
     UTIL_EXPORT std::size_t get_right_char (const std::string& s, std::size_t pos);
 
+    // literal to convert a single utf-8 character code point sequence to a constexpr uint32
+    // f.e. to use it as template parameter.
+    namespace literals {
+
+      constexpr uint32_t operator "" _UTF8(const char* utf8, std::size_t i) {
+        uint32_t w = static_cast<unsigned char>(utf8[0]);
+        for (int n = 1; n < i; ++n) {
+          w |= static_cast<unsigned char>(utf8[n]) << (8 * n);
+        }
+        return w;
+      }
+
+    }
+
+    // helper class to keep a char array with defined size
+    template<std::size_t N>
+    struct utf8_buffer {
+      char buffer[N] = {0};
+    };
+
+    // reconvert an uitn32 to an utf-8 character code point sequence
+    constexpr utf8_buffer<5> uint32_to_utf8 (uint32_t wc) {
+      union {
+        uint32_t wc;
+        utf8_buffer<5> cp;
+      } u = {wc};
+      return {u.cp};
+    }
+
   } // namespace utf8
 
   namespace bom {
