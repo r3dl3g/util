@@ -38,8 +38,13 @@ namespace util {
 
   namespace time {
 
+    // --------------------------------------------------------------------------
+    std::tm mktm (int year, int month, int day, int hour, int minute, int second, int isdst) {
+      return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0, 0, isdst };
+    }
+
+    // --------------------------------------------------------------------------
     std::tm time_t2tm (const std::time_t now) {
-      // --------------------------------------------------------------------------
       std::tm t{};
 #ifdef WIN32
       localtime_s(&t, &now);
@@ -49,6 +54,32 @@ namespace util {
       return t;
     }
 
+    // --------------------------------------------------------------------------
+    std::tm time_t2utc (const std::time_t now) {
+      std::tm t{};
+#ifdef WIN32
+      gmtime_s(&t, &now);
+#else
+      gmtime_r(&now, &t);
+#endif
+      return t;
+    }
+
+    // --------------------------------------------------------------------------
+    std::time_t get_local_time_offset () {
+      static std::time_t offset = [] () {
+        std::tm t_ = mktm(2000, 1, 1, 0, 0, 0, 0);
+        const auto t = std::mktime(&t_);
+        std::tm tl_ = time_t2tm(t);
+        const auto tl = std::mktime(&tl_);
+        std::tm tu_ = time_t2utc(t);
+        const auto tu = std::mktime(&tu_);
+        return (tl - tu);
+      } ();
+      return offset;
+    }
+
+    // --------------------------------------------------------------------------
     std::time_t tm2time_t (const std::tm& t_) {
       std::tm t = t_;
       return std::mktime(&t);
@@ -58,12 +89,9 @@ namespace util {
       return std::mktime(&t);
     }
 
-    std::tm mktm (int year, int month, int day, int hour, int minute, int second) {
-      return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0, 0, 0 };
-    }
-
-    time_point mktime_point (int year, int month, int day, int hour, int minute, int second, int millis) {
-      return std::chrono::system_clock::from_time_t(tm2time_t(mktm(year, month, day, hour, minute, second))) + std::chrono::milliseconds(millis);
+    time_point mktime_point (int year, int month, int day, int hour, int minute, int second, int millis, int isdst) {
+      return std::chrono::system_clock::from_time_t(tm2time_t(mktm(year, month, day, hour, minute, second, isdst))) +
+          std::chrono::milliseconds(millis);
     }
 
     // --------------------------------------------------------------------------
@@ -73,6 +101,28 @@ namespace util {
 
     std::tm local_time_now () {
       return local_time(std::chrono::system_clock::now());
+    }
+
+    // --------------------------------------------------------------------------
+    std::time_t utc2time_t (const std::tm& t) {
+      return tm2time_t(t) + get_local_time_offset();
+    }
+
+    std::time_t utc2time_t (std::tm&& t) {
+      return tm2time_t(std::move(t)) + get_local_time_offset();
+    }
+
+    time_point mktime_point_from_utc (int year, int month, int day, int hour, int minute, int second, int millis) {
+      return std::chrono::system_clock::from_time_t(utc2time_t(mktm(year, month, day, hour, minute, second, 0))) +
+          std::chrono::milliseconds(millis);
+    }
+
+    std::tm utc_time (time_point const& tp) {
+      return time_t2utc(std::chrono::system_clock::to_time_t(tp));
+    }
+
+    std::tm utc_time_now () {
+      return utc_time(std::chrono::system_clock::now());
     }
 
     // --------------------------------------------------------------------------

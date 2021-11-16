@@ -49,20 +49,35 @@ namespace util {
     using duration = std::chrono::system_clock::duration;
 
     // --------------------------------------------------------------------------
+    UTIL_EXPORT std::tm mktm (int year = 0, int month = 0, int day = 0,
+                              int hour = 0, int minute = 0, int second = 0, int isdst = -1);
+
     UTIL_EXPORT std::tm time_t2tm (std::time_t now);
+    UTIL_EXPORT std::tm time_t2utc (std::time_t now);
+
+    UTIL_EXPORT std::time_t get_local_time_offset ();
+
     UTIL_EXPORT std::time_t tm2time_t (const std::tm& t);
     UTIL_EXPORT std::time_t tm2time_t (std::tm&& t);
 
-    UTIL_EXPORT std::tm mktm (int year = 0, int month = 0, int day = 0,
-                              int hour = 0, int minute = 0, int second = 0);
-
     UTIL_EXPORT time_point mktime_point (int year = 0, int month = 0, int day = 0,
                                          int hour = 0, int minute = 0, int second = 0,
-                                         int millis = 0);
+                                         int millis = 0, int isdst = -1);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::tm local_time (time_point const& tp);
     UTIL_EXPORT std::tm local_time_now ();
+
+    // --------------------------------------------------------------------------
+    UTIL_EXPORT std::time_t utc2time_t (const std::tm& t);
+    UTIL_EXPORT std::time_t utc2time_t (std::tm&& t);
+
+    UTIL_EXPORT time_point mktime_point_from_utc (int year = 0, int month = 0, int day = 0,
+                                                  int hour = 0, int minute = 0, int second = 0,
+                                                  int millis = 0);
+
+    UTIL_EXPORT std::tm utc_time (time_point const& tp);
+    UTIL_EXPORT std::tm utc_time_now ();
 
     // --------------------------------------------------------------------------
     inline bool is_leap_year (int year) {
