@@ -26,7 +26,7 @@ if(NOT TARGET util)
 
   set (UTIL_VERSION_MAJOR 1)
   set (UTIL_VERSION_MINOR 0)
-  set (UTIL_VERSION_PATCH 3)
+  set (UTIL_VERSION_PATCH 4)
   set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
 
   set (UTIL_LIBRARIES util::util)
@@ -118,12 +118,15 @@ if(NOT TARGET util)
     "${PROJECT_BINARY_DIR}/util_version.h"
   )
 
-  set(SOURCE_FILES command_line.cpp
+  set(SOURCE_FILES
+    command_line.cpp
     csv_reader.cpp
     string_util.cpp
     time_util.cpp
+    fs_util.cpp
   )
-  set(INCLUDE_FILES bind_method.h
+  set(INCLUDE_FILES
+    bind_method.h
     blocking_queue.h
     command_line.h
     csv_reader.h
@@ -133,6 +136,7 @@ if(NOT TARGET util)
     sort_order.h
     string_util.h
     sys_fs.h
+    fs_util.h
     time_util.h
     tuple_util.h
     variadic_util.h
