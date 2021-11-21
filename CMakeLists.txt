@@ -44,7 +44,8 @@ if(NOT TARGET util)
   if (GUIPP_USE_BOOST)
     find_package(Boost 1.65 REQUIRED COMPONENTS filesystem)
     set (UTIL_CXX_FLAGS "-DUSE_BOOST")
-    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} Boost::filesystem)
+    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} )
+    set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
   endif()
 
   if(APPLE)
@@ -141,6 +142,7 @@ if(NOT TARGET util)
     tuple_util.h
     variadic_util.h
     vector_util.h
+    currency.h
   )
 
   if (NOT ANDROID)

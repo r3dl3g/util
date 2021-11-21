@@ -32,11 +32,11 @@ namespace util {
   // precision
   template<uint32_t SYM, int N = 2, int D = math::pow10<N>()>
   struct currency {
-    inline currency (long full = 0)
+    inline currency (int64_t full = 0)
       :full_(full)
     {}
 
-    inline currency (long e, long c)
+    inline currency (int64_t e, int64_t c)
       : full_(e * D + c)
     {}
 
@@ -60,19 +60,19 @@ namespace util {
       return full_ == rhs.full_;
     }
 
-    inline currency operator* (long f) const {
+    inline currency operator* (int64_t f) const {
       return {full_ * f};
     }
 
-    inline currency operator* (int f) const {
+    inline currency operator* (int32_t f) const {
       return {full_ * f};
     }
 
-    inline currency operator/ (long f) const {
+    inline currency operator/ (int64_t f) const {
       return {full_ / f};
     }
 
-    inline currency operator/ (int f) const {
+    inline currency operator/ (int32_t f) const {
       return {full_ / f};
     }
 
@@ -89,15 +89,15 @@ namespace util {
       return *this;
     }
 
-    inline long pre_decimals () const {
+    inline int64_t pre_decimals () const {
       return full_ / D;
     }
 
-    inline long decimals () const {
+    inline int64_t decimals () const {
       return std::abs(full_ % D);
     }
 
-    inline long all_digits () const {
+    inline int64_t all_digits () const {
       return full_;
     }
 
@@ -106,7 +106,7 @@ namespace util {
     }
 
   private:
-    long full_;
+    int64_t full_;
   };
 
   using namespace utf8::literals;
@@ -149,7 +149,7 @@ namespace util {
 
   template<uint32_t SYM, int N, int D>
   inline std::istream& operator>> (std::istream& in, currency<SYM, N, D>& m) {
-    while (in.good() && !std::isdigit(in.peek()) && (in.peek() != '-')) {
+    while (in.good() && !std::isdigit(in.peek(), in.getloc()) && (in.peek() != '-')) {
       in.ignore();
     }
     double v = 0;

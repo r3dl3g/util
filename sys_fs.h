@@ -23,34 +23,30 @@
 // Common includes
 //
 
+#define PRINT_SYS_FS_MESSAGES
 #ifdef PRINT_SYS_FS_MESSAGES
-# define print_sys_fs_msg(A) #pragma message A
+# ifndef WIN32
+#  define print_sys_fs_msg(A) #pragma message A
+# else
+#  define print_sys_fs_msg(A)
+# endif // WIN32
 #else
 # define print_sys_fs_msg(A)
 #endif
 
-#if defined USE_BOOST
-print_sys_fs_msg("c++ include boost/filesystem.hpp")
-# include <boost/filesystem.hpp>
+#if defined USE_BOOST_FS
 
-print_sys_fs_msg("c++ use boost::filesystem")
-namespace sys_fs = boost::filesystem;
+//# ifdef USE_FILE_TIME_POINT
+//#  undef USE_FILE_TIME_POINT
+//# endif // USE_FILE_TIME_POINT
 
-namespace boost {
-  namespace filesystem {
-    typedef time_t file_time_type;
-  }
-}
+# define has_boost_filesystem 1
 
 #elif defined ANDROID
 
-#include <ghc/filesystem.hpp>
-namespace sys_fs = ghc::filesystem;
+# define has_ghc_filesystem 1
 
-#else
-
-// Use c++ feature checking
-#if defined __has_include
+#elif defined __has_include
 print_sys_fs_msg("c++ has include")
 
 # if __has_include(<filesystem>)
@@ -63,10 +59,10 @@ print_sys_fs_msg("c++ has include experimental/filesystem")
 
 # elif __has_include(<boost/filesystem.hpp>)
 print_sys_fs_msg("c++ has include boost:filesystem")
-#  define USE_BOOST 1
+#  define has_boost_filesystem 1
 
 # else
-print_sys_fs_msg("c++ has no include filesystem")
+print_sys_fs_msg("c++ found no include filesystem")
 
 # endif
 
@@ -83,34 +79,53 @@ print_sys_fs_msg("c++ use clang above 8")
 print_sys_fs_msg("Fall back to experimental/filesystem")
 #  define has_experimental_filesystem 1
 
+#elif WIN32 && __clang__
+print_sys_fs_msg("c++ use std::experimental::filesystem")
+#  define has_experimental_filesystem 1
+
 #endif
 
 
 #if defined has_filesystem
-print_sys_fs_msg("c++ include std filesystem")
+print_sys_fs_msg("c++ include <filesystem>")
 # include <filesystem>
 
-# if WIN32 && __clang__
-print_sys_fs_msg("c++ use std::experimental::filesystem")
-namespace sys_fs = std::experimental::filesystem;
-
-# else
 print_sys_fs_msg("c++ use std::filesystem")
 namespace sys_fs = std::filesystem;
 
-# endif
-
 #elif defined has_experimental_filesystem
-print_sys_fs_msg("c++ include experimental/filesystem")
+print_sys_fs_msg("c++ include <experimental/filesystem>")
 # include <experimental/filesystem>
 
 print_sys_fs_msg("c++ use std::experimental::filesystem")
 namespace sys_fs = std::experimental::filesystem;
 
+#elif defined has_boost_filesystem
+
+print_sys_fs_msg("c++ include <boost/filesystem.hpp>")
+# include <boost/filesystem.hpp>
+
+print_sys_fs_msg("c++ use boost::filesystem")
+namespace sys_fs = boost::filesystem;
+
+//# ifndef WIN32
+//namespace boost {
+//  namespace filesystem {
+//    typedef time_t file_time_type;
+//  }
+//}
+//# endif // !WIN32
+
+
+#elif defined has_ghc_filesystem
+print_sys_fs_msg("c++ include <ghc/filesystem.hpp>")
+#include <ghc/filesystem.hpp>
+
+print_sys_fs_msg("c++ use ghc::filesystem")
+namespace sys_fs = ghc::filesystem;
+
 #else
 
 print_sys_fs_msg("No C++ filesystem available")
-
-#endif
 
 #endif
