@@ -23,22 +23,15 @@
 // Common includes
 //
 
-#define PRINT_SYS_FS_MESSAGES
+#define NOT_PRINT_SYS_FS_MESSAGES
 #ifdef PRINT_SYS_FS_MESSAGES
-# ifndef WIN32
-#  define print_sys_fs_msg(A) #pragma message A
-# else
-#  define print_sys_fs_msg(A)
-# endif // WIN32
+#  define DO_PRAGMA(x) #x
+#  define print_sys_fs_msg(x) _Pragma(DO_PRAGMA(message("INFO: " #x)))
 #else
 # define print_sys_fs_msg(A)
 #endif
 
 #if defined USE_BOOST_FS
-
-//# ifdef USE_FILE_TIME_POINT
-//#  undef USE_FILE_TIME_POINT
-//# endif // USE_FILE_TIME_POINT
 
 # define has_boost_filesystem 1
 
@@ -88,7 +81,7 @@ print_sys_fs_msg("c++ use std::experimental::filesystem")
 
 #if defined has_filesystem
 print_sys_fs_msg("c++ include <filesystem>")
-# include <filesystem>
+#include <filesystem>
 
 print_sys_fs_msg("c++ use std::filesystem")
 namespace sys_fs = std::filesystem;
@@ -108,13 +101,13 @@ print_sys_fs_msg("c++ include <boost/filesystem.hpp>")
 print_sys_fs_msg("c++ use boost::filesystem")
 namespace sys_fs = boost::filesystem;
 
-//# ifndef WIN32
-//namespace boost {
-//  namespace filesystem {
-//    typedef time_t file_time_type;
-//  }
-//}
-//# endif // !WIN32
+# ifndef WIN32
+namespace boost {
+  namespace filesystem {
+    typedef time_t file_time_type;
+  }
+}
+# endif // !WIN32
 
 
 #elif defined has_ghc_filesystem
