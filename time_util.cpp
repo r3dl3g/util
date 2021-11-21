@@ -219,7 +219,11 @@ namespace util {
                                  const char* time_delem,
                                  bool add_millis) {
 #if WIN32
+# if _MSVC_LANG < 20173L
       const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
+# else 
+      const auto tse = ftp.time_since_epoch().count() - std::filesystem::__std_fs_file_time_epoch_adjustment;
+# endif
       const time_point tp = time_point(time_point::duration(tse));
 #elif __cplusplus > 201703L // C++20
       const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(ftp);
