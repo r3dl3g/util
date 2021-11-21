@@ -111,6 +111,20 @@ namespace util {
 
   using namespace utf8::literals;
 
+#ifdef WIN32
+
+  typedef currency<0xac82e2> Euro;
+  typedef currency<0x24> Dollar;
+  typedef currency<0xa3c2> Pound;
+  typedef currency<0xa5c2> Yen;
+  typedef currency<0xa982e2> Won;
+  typedef currency<0x5143> Yuan;
+  typedef currency<0xa682e2> Naira;
+  typedef currency<0xa882e2> Rupee;
+  typedef currency<0xbd82e2> Ruble;
+
+#else
+
   typedef currency<u8"€"_UTF8> Euro;
   typedef currency<u8"$"_UTF8> Dollar;
   typedef currency<u8"£"_UTF8> Pound;
@@ -120,6 +134,8 @@ namespace util {
   typedef currency<u8"₦"_UTF8> Naira;
   typedef currency<u8"₹"_UTF8> Rupee;
   typedef currency<u8"₽"_UTF8> Ruble;
+
+#endif // _MSVC
 
   namespace literals {
 
