@@ -219,12 +219,19 @@ namespace util {
                                  const char* time_delem,
                                  bool add_millis) {
 #if WIN32
-# if _MSVC_LANG < 20173L
-      const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
-# else 
-      const auto tse = ftp.time_since_epoch().count() - std::filesystem::__std_fs_file_time_epoch_adjustment;
-# endif
+# if defined USE_MINGW
+      using namespace std::chrono;
+      auto sctp = time_point_cast<system_clock::duration>(ftp - file_time_point::clock::now()
+                  + system_clock::now());
+      const auto tse = system_clock::to_time_t(sctp);
       const time_point tp = time_point(time_point::duration(tse));
+# elif _MSVC_LANG < 20173L
+      const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
+      const time_point tp = time_point(time_point::duration(tse));
+# else
+      const auto tse = ftp.time_since_epoch().count() - std::filesystem::__std_fs_file_time_epoch_adjustment;
+      const time_point tp = time_point(time_point::duration(tse));
+# endif
 #elif __cplusplus > 201703L // C++20
       const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(ftp);
       const time_point tp = std::chrono::system_clock::to_time_t(systemTime);
