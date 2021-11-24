@@ -105,6 +105,21 @@ namespace util {
       return static_cast<double>(full_) / D;
     }
 
+    std::string string () const;
+
+    inline std::ostream& as_fix_real (std::ostream& out) const {
+      out << std::fixed << std::setprecision(precision()) << as_real();
+      return out;
+    }
+
+    inline std::ostream& with_symbol (std::ostream& out) const {
+      const static auto symbol = utf8::uint32_to_utf8(SYM);
+      out << symbol.buffer;
+      return as_fix_real(out);
+    }
+
+    static currency from_string (const std::string&);
+
   private:
     int64_t full_;
   };
@@ -158,14 +173,13 @@ namespace util {
 
   template<uint32_t SYM, int N, int D>
   inline std::ostream& operator<< (std::ostream& out, const currency<SYM, N, D>& m) {
-    const static auto symbol = utf8::uint32_to_utf8(SYM);
-    out << symbol.buffer << std::fixed << std::setprecision(m.precision()) << m.as_real();
-    return out;
+    return m.with_symbol(out);
   }
 
   template<uint32_t SYM, int N, int D>
   inline std::istream& operator>> (std::istream& in, currency<SYM, N, D>& m) {
-    while (in.good() && !std::isdigit(in.peek(), in.getloc()) && (in.peek() != '-')) {
+    // std::isdigit(in.peek(), in.getloc()) crashes with bad_cast exception
+    while (in.good() && !std::isdigit(in.peek()) && (in.peek() != '-')) {
       in.ignore();
     }
     double v = 0;
@@ -173,5 +187,18 @@ namespace util {
     m = v;
     return in;
   }
+
+  template<uint32_t SYM, int N, int D>
+  std::string currency<SYM, N, D>::string () const {
+    return ostreamfmt(*this);
+  }
+
+  template<uint32_t SYM, int N, int D>
+  currency<SYM, N, D> currency<SYM, N, D>::from_string (const std::string& str) {
+    currency c;
+    std::istringstream(str) >> c;
+    return c;
+  }
+
 
 } // util
