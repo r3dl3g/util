@@ -159,7 +159,7 @@ namespace util {
   template<uint32_t SYM, int N, int D>
   inline std::ostream& operator<< (std::ostream& out, const currency<SYM, N, D>& m) {
     const static auto symbol = utf8::uint32_to_utf8(SYM);
-    out << symbol.buffer << std::setprecision(m.precision()) << m.as_real();
+    out << symbol.buffer << std::fixed << std::setprecision(m.precision()) << m.as_real();
     return out;
   }
 
