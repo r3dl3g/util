@@ -16,10 +16,10 @@ In your CMakeLists.txt include this project directory and add the library util t
 
 add_subdirectory(util)
 
-add_definitions(${UTILG_CXX_FLAGS})
+add_definitions(${UTIL_CXX_FLAGS})
 
 add_executable(MyApp MyApp.cpp)
-target_link_libraries(MyApp ${UTILG_LIBRARIES} ${UTILG_SYS_LIBRARIES})
-set_target_properties(MyApp PROPERTIES CXX_STANDARD ${UTILG_CXX_STANDARD})
+target_link_libraries(MyApp ${UTIL_LIBRARIES} ${UTIL_SYS_LIBRARIES})
+set_target_properties(MyApp PROPERTIES CXX_STANDARD ${UTIL_CXX_STANDARD})
 
 ```
