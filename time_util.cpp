@@ -159,9 +159,9 @@ namespace util {
                                  const char* date_delem,
                                  const char* separator,
                                  const char* time_delem) {
-      std::ostringstream strm;
-      format_datetime(strm, t, date_delem, separator, time_delem);
-      return strm.str();
+      std::ostringstream os;
+      format_datetime(os, t, date_delem, separator, time_delem);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
@@ -177,9 +177,9 @@ namespace util {
                                  const char* date_delem,
                                  const char* separator,
                                  const char* time_delem) {
-      std::ostringstream strm;
-      format_datetime(strm, tp, date_delem, separator, time_delem);
-      return strm.str();
+      std::ostringstream os;
+      format_datetime(os, tp, date_delem, separator, time_delem);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
@@ -206,9 +206,9 @@ namespace util {
                                  const char* separator,
                                  const char* time_delem,
                                  bool add_millis) {
-      std::ostringstream strm;
-      format_datetime(strm, tp, date_delem, separator, time_delem, add_millis);
-      return strm.str();
+      std::ostringstream os;
+      format_datetime(os, tp, date_delem, separator, time_delem, add_millis);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
@@ -250,46 +250,37 @@ namespace util {
     }
 #endif
 
-    time_point parse_datetime (const std::string& s) {
-      std::istringstream strm(s);
-      return parse_datetime(strm);
+    bool skip_delemiter (std::istream& is) {
+      char ch = is.peek();
+      while (is.good() && (('.' == ch) || (':' == ch) || ('-' == ch) || (' ' == ch) || ('\\' == ch) || ('T' == ch))) {
+        is.ignore();
+        ch = is.peek();
+      }
+      return is.good() && ('\n' != ch) && ('\r' != ch);
     }
 
-    time_point parse_datetime (std::istream& strm) {
+    time_point parse_datetime (const std::string& s) {
+      std::istringstream is(s);
+      return parse_datetime(is);
+    }
+
+    time_point parse_datetime (std::istream& is) {
       int year = 0, month = 1, day = 1, hour = 0, minute = 0, second = 0, millis = 0;
-      if (strm.good()) {
-        strm >> year;
-        while (strm.good() && !isdigit(strm.peek())) {
-          strm.ignore(1);
-        }
-        if (strm.good()) {
-          strm >> month;
-          while (strm.good() && !isdigit(strm.peek())) {
-            strm.ignore(1);
-          }
-          if (strm.good()) {
-            strm >> day;
-            while (strm.good() && !isdigit(strm.peek())) {
-              strm.ignore(1);
-            }
-            if (strm.good()) {
-              strm >> hour;
-              while (strm.good() && !isdigit(strm.peek())) {
-                strm.ignore(1);
-              }
-              if (strm.good()) {
-                strm >> minute;
-                while (strm.good() && !isdigit(strm.peek())) {
-                  strm.ignore(1);
-                }
-                if (strm.good()) {
-                  strm >> second;
-                  if (strm.good() && (strm.peek() == '.')) {
-                    while (strm.good() && !isdigit(strm.peek())) {
-                      strm.ignore(1);
-                    }
-                    if (strm.good()) {
-                      strm >> millis;
+      if (skip_delemiter(is)) {
+        is >> year;
+        if (skip_delemiter(is)) {
+          is >> month;
+          if (skip_delemiter(is)) {
+            is >> day;
+            if (skip_delemiter(is)) {
+              is >> hour;
+              if (skip_delemiter(is)) {
+                is >> minute;
+                if (skip_delemiter(is)) {
+                  is >> second;
+                  if (is.good() && (is.peek() == '.')) {
+                    if (skip_delemiter(is)) {
+                      is >> millis;
                     }
                   }
                 }
@@ -317,9 +308,9 @@ namespace util {
 
     UTIL_EXPORT std::string format_time (const std::tm& t,
                                          const char* delem) {
-      std::ostringstream strm;
-      format_time(strm, t, delem);
-      return strm.str();
+      std::ostringstream is;
+      format_time(is, t, delem);
+      return is.str();
     }
 
     // --------------------------------------------------------------------------
@@ -348,20 +339,14 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
-    UTIL_EXPORT time_point parse_date (std::istream& strm) {
+    UTIL_EXPORT time_point parse_date (std::istream& is) {
       int year = 0, month = 1, day = 1;
-      if (strm.good()) {
-        strm >> year;
-        while (strm.good() && !isdigit(strm.peek())) {
-          strm.ignore(1);
-        }
-        if (strm.good()) {
-          strm >> month;
-          while (strm.good() && !isdigit(strm.peek())) {
-            strm.ignore(1);
-          }
-          if (strm.good()) {
-            strm >> day;
+      if (skip_delemiter(is)) {
+        is >> year;
+        if (skip_delemiter(is)) {
+          is >> month;
+          if (skip_delemiter(is)) {
+            is >> day;
           }
         }
       }
@@ -370,8 +355,8 @@ namespace util {
     }
 
     UTIL_EXPORT time_point parse_date (const std::string& s) {
-      std::istringstream strm(s);
-      return parse_date(strm);
+      std::istringstream is(s);
+      return parse_date(is);
     }
 
     // --------------------------------------------------------------------------
@@ -469,9 +454,9 @@ namespace util {
                                  const char* time_delem,
                                  bool add_millis,
                                  bool minimize) {
-      std::ostringstream strm;
-      format_duration(strm, d, separator, time_delem, add_millis, minimize);
-      return strm.str();
+      std::ostringstream os;
+      format_duration(os, d, separator, time_delem, add_millis, minimize);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
@@ -481,9 +466,9 @@ namespace util {
                                     const char* time_delem,
                                     bool add_millis,
                                     bool minimize) {
-      std::ostringstream strm;
-      format_duration_mt(strm, d, hours_per_mt, separator, time_delem, add_millis, minimize);
-      return strm.str();
+      std::ostringstream os;
+      format_duration_mt(os, d, hours_per_mt, separator, time_delem, add_millis, minimize);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
@@ -491,43 +476,31 @@ namespace util {
                                         const char* time_delem,
                                         bool add_millis,
                                         bool minimize) {
-      std::ostringstream strm;
-      format_duration_only_h(strm, d, time_delem, add_millis, minimize);
-      return strm.str();
+      std::ostringstream os;
+      format_duration_only_h(os, d, time_delem, add_millis, minimize);
+      return os.str();
     }
 
     // --------------------------------------------------------------------------
     duration parse_duration (const std::string& s) {
-      std::istringstream strm(s);
-      return parse_duration(strm);
+      std::istringstream is(s);
+      return parse_duration(is);
     }
 
-    duration parse_duration (std::istream& in) {
+    duration parse_duration (std::istream& is) {
       int day = 0, hour = 0, minute = 0, second = 0, millis = 0;
 
-      if (in.good()) {
-        in >> day;
-        while (in.good() && !isdigit(in.peek())) {
-          in.ignore(1);
-        }
-        if (in.good()) {
-          in >> hour;
-          while (in.good() && !isdigit(in.peek())) {
-            in.ignore(1);
-          }
-          if (in.good()) {
-            in >> minute;
-            while (in.good() && !isdigit(in.peek())) {
-              in.ignore(1);
-            }
-            if (in.good()) {
-              in >> second;
-              if (in.good() && (in.peek() == '.')) {
-                while (in.good() && !isdigit(in.peek())) {
-                  in.ignore(1);
-                }
-                if (in.good()) {
-                  in >> millis;
+      if (skip_delemiter(is)) {
+        is >> day;
+        if (skip_delemiter(is)) {
+          is >> hour;
+          if (skip_delemiter(is)) {
+            is >> minute;
+            if (skip_delemiter(is)) {
+              is >> second;
+              if (is.good() && (is.peek() == '.')) {
+                if (skip_delemiter(is)) {
+                  is >> millis;
                 }
               }
             }
