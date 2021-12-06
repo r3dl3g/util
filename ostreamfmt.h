@@ -29,3 +29,18 @@
 * F.e.: ostreamfmt("Hello Word" << 2) produces a std:sstring with "Hello Word2".
 */
 #define ostreamfmt(a) static_cast<const std::ostringstream&>(std::ostringstream() << a).str() // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+
+struct str_fmt {
+  template <typename T>
+  inline str_fmt& operator<< (T const& value) {
+    buffer << value;
+    return *this;
+  }
+
+  inline operator std::string () const {
+    return buffer.str();
+  }
+
+private:
+  std::ostringstream buffer;
+};
