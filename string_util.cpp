@@ -1,20 +1,18 @@
 /**
-* @copyright (c) 2016-2021 Ing. Buero Rothfuss
-*                          Riedlinger Str. 8
-*                          70327 Stuttgart
-*                          Germany
-*                          http://www.rothfuss-web.de
-*
-* @author    <a href="mailto:armin@rothfuss-web.de">Armin Rothfuss</a>
-*
-* Project    standard lib
-*
-* Customer   -
-*
-* @brief     C++ API: std::string utilities
-*
-* @file
-*/
+ * @copyright (c) 2016-2021 Ing. Buero Rothfuss
+ *                          Riedlinger Str. 8
+ *                          70327 Stuttgart
+ *                          Germany
+ *                          http://www.rothfuss-web.de
+ *
+ * @author    <a href="mailto:armin@rothfuss-web.de">Armin Rothfuss</a>
+ *
+ * Project    utility lib
+ *
+ * @brief     C++ API: std::string utilities
+ *
+ * @license   MIT license. See accompanying file LICENSE.
+ */
 
 // --------------------------------------------------------------------------
 //

@@ -1,5 +1,5 @@
 /**
- * @copyright (c) 2018-2021 Ing. Buero Rothfuss
+ * @copyright (c) 2021-2021 Ing. Buero Rothfuss
  *                          Riedlinger Str. 8
  *                          70327 Stuttgart
  *                          Germany
@@ -7,13 +7,11 @@
  *
  * @author    <a href="mailto:armin@rothfuss-web.de">Armin Rothfuss</a>
  *
- * Project    standard lib
+ * Project    utility lib
  *
- * Customer   -
+ * @brief     C++ API: filesystem utils
  *
- * @brief     C++ API: command_line
- *
- * @file
+ * @license   MIT license. See accompanying file LICENSE.
  */
 
 // --------------------------------------------------------------------------

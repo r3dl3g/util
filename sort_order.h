@@ -7,13 +7,11 @@
  *
  * @author    <a href="mailto:armin@rothfuss-web.de">Armin Rothfuss</a>
  *
- * Project    standard lib
+ * Project    utility lib
  *
- * Customer   -
+ * @brief     C++ API: sort order enum
  *
- * @brief     C++ API: file system mapper
- *
- * @file
+ * @license   MIT license. See accompanying file LICENSE.
  */
 
 #pragma once
