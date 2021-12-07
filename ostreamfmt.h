@@ -24,9 +24,8 @@
 
 /**
 * Allows to use ostringstream formatting as one-line.
-* F.e.: ostreamfmt("Hello Word" << 2) produces a std:sstring with "Hello Word2".
+* F.e.: str_fmt() << "Hello Word" << 2; produces a std:sstring with "Hello Word2".
 */
-#define ostreamfmt(a) static_cast<const std::ostringstream&>(std::ostringstream() << a).str() // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
 
 struct str_fmt {
   template <typename T>
@@ -42,3 +41,10 @@ struct str_fmt {
 private:
   std::ostringstream buffer;
 };
+
+/**
+* Allows to use ostringstream formatting as one-line.
+* F.e.: ostreamfmt("Hello Word" << 2) produces a std:sstring with "Hello Word2".
+*/
+
+#define ostreamfmt(a) static_cast<std::string>(str_fmt() << a)
