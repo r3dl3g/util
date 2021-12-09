@@ -29,6 +29,14 @@ namespace util {
 
     UTIL_EXPORT sys_fs::path get_user_home ();
 
+    UTIL_EXPORT bool is_executable (const sys_fs::path&);
+
+    UTIL_EXPORT int execute (const sys_fs::path&);
+
+    UTIL_EXPORT int open_document (const sys_fs::path&);
+
+    UTIL_EXPORT int execute_or_open (const sys_fs::path&);
+
   } // namespace fs
 
 } // namespace util

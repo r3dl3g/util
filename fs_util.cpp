@@ -44,6 +44,35 @@ namespace util {
       return {"."};
     }
 
+    bool is_executable (const sys_fs::path& f) {
+#ifdef WIN32
+      return util::string::ends_with(util::string::utf16_to_utf8(f.c_str()), ".exe");
+#else
+      return (sys_fs::status(f).permissions() &
+              (sys_fs::perms::owner_exec|sys_fs::perms::group_exec|sys_fs::perms::others_exec))
+          != sys_fs::perms::none;
+#endif
+    }
+
+    int execute (const sys_fs::path& f) {
+#ifdef WIN32
+      return std::system(util::string::utf16_to_utf8(f.c_str()));
+#else
+      return std::system(f.c_str());
+#endif
+    }
+
+    int open_document (const sys_fs::path& f) {
+#ifdef WIN32
+      return ShellExecute(NULL, "open", f.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+#else
+      return std::system(("xdg-open \"" + f.string() + "\"").c_str());
+#endif
+    }
+
+    int execute_or_open (const sys_fs::path& f) {
+      return is_executable(f) ? execute(f) : open_document(f);
+    }
 
   } // namespace fs
 
