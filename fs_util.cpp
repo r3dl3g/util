@@ -18,12 +18,18 @@
 //
 // Common includes
 //
+#ifdef WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 
 // --------------------------------------------------------------------------
 //
 // Library includes
 //
 #include <util/fs_util.h>
+#include <util/string_util.h>
 
 
 namespace util {
@@ -56,7 +62,7 @@ namespace util {
 
     int execute (const sys_fs::path& f) {
 #ifdef WIN32
-      return std::system(util::string::utf16_to_utf8(f.c_str()));
+      return std::system(util::string::utf16_to_utf8(f.c_str()).c_str());
 #else
       return std::system(f.c_str());
 #endif
@@ -64,7 +70,7 @@ namespace util {
 
     int open_document (const sys_fs::path& f) {
 #ifdef WIN32
-      return ShellExecute(NULL, "open", f.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+      return reinterpret_cast<int>(ShellExecuteW(NULL, L"open", f.c_str(), nullptr, nullptr, SW_SHOWNORMAL));
 #else
       return std::system(("xdg-open \"" + f.string() + "\"").c_str());
 #endif
