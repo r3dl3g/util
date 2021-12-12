@@ -21,7 +21,7 @@
 // Library includes
 //
 #include <util/sys_fs.h>
-#include <util-export.h>
+#include <util/util-export.h>
 
 namespace util {
 

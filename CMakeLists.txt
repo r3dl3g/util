@@ -26,7 +26,7 @@ if(NOT TARGET util)
 
   set (UTIL_VERSION_MAJOR 1)
   set (UTIL_VERSION_MINOR 0)
-  set (UTIL_VERSION_PATCH 5)
+  set (UTIL_VERSION_PATCH 6)
   set (UTIL_VERSION "${UTIL_VERSION_MAJOR}.${UTIL_VERSION_MINOR}.${UTIL_VERSION_PATCH}")
 
   set (UTIL_LIBRARIES util::util)
@@ -41,10 +41,9 @@ if(NOT TARGET util)
     ${PROJECT_BINARY_DIR}
     )
 
-  if (GUIPP_USE_BOOST)
-    find_package(Boost 1.65 REQUIRED COMPONENTS filesystem)
+  if (UTIL_USE_BOOST)
+    find_package(Boost REQUIRED COMPONENTS filesystem)
     set (UTIL_CXX_FLAGS "-DUSE_BOOST")
-    set (UTIL_SYS_LIBRARIES ${UTIL_SYS_LIBRARIES} )
     set (UTIL_INCLUDE_DIRS ${UTIL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
   endif()
 
@@ -119,7 +118,7 @@ if(NOT TARGET util)
   # header file to pass version settings to the source code
   configure_file (
     "${PROJECT_SOURCE_DIR}/version.h.in"
-    "${PROJECT_BINARY_DIR}/util_version.h"
+    "${PROJECT_BINARY_DIR}/util/util_version.h"
   )
 
   set(SOURCE_FILES
@@ -176,18 +175,18 @@ if(NOT TARGET util)
   GENERATE_EXPORT_HEADER(util
     BASE_NAME UTIL
     EXPORT_MACRO_NAME UTIL_EXPORT
-    EXPORT_FILE_NAME util-export.h
+    EXPORT_FILE_NAME util/util-export.h
     STATIC_DEFINE UTIL_BUILT_AS_STATIC_LIB
   )
 
   if (UTIL_CONFIG_INSTALL)
-    set (INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/util)
-    set (LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/util)
+    set (UTIL_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/util)
+    set (UTIL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/cmake/util)
 
     target_include_directories(util
                                PUBLIC
                                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-                               "$<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>"
+                               "$<INSTALL_INTERFACE:${UTIL_INSTALL_INCLUDEDIR}>"
     )
 
     write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake
@@ -196,7 +195,7 @@ if(NOT TARGET util)
 
     configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
                                   "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
-                                  INSTALL_DESTINATION ${LIBRARY_INSTALL_DIR}
+                                  INSTALL_DESTINATION ${UTIL_INSTALL_LIBDIR}
                                   PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
 
     install(TARGETS util
@@ -204,19 +203,20 @@ if(NOT TARGET util)
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            INCLUDES DESTINATION ${INCLUDE_INSTALL_DIR}
+            INCLUDES DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
     )
 
     install(FILES ${INCLUDE_FILES}
-            ${PROJECT_BINARY_DIR}/util-export.h
-            ${PROJECT_BINARY_DIR}/util_version.h
-            DESTINATION ${INCLUDE_INSTALL_DIR}
+            ${PROJECT_BINARY_DIR}/util/util-export.h
+            ${PROJECT_BINARY_DIR}/util/util_version.h
+            LICENSE
+            DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
     )
 
     install(EXPORT utilTargets
             FILE utilTargets.cmake
             NAMESPACE util::
-            DESTINATION ${LIBRARY_INSTALL_DIR}
+            DESTINATION ${UTIL_INSTALL_LIBDIR}
     )
 
     export(TARGETS util FILE utilTargets.cmake)
@@ -224,7 +224,7 @@ if(NOT TARGET util)
     install(FILES
             "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake"
-            DESTINATION ${LIBRARY_INSTALL_DIR})
+            DESTINATION ${UTIL_INSTALL_LIBDIR})
 
   endif()
 

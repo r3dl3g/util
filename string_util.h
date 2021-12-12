@@ -32,7 +32,7 @@
 // Library includes
 //
 #include <util/ostreamfmt.h>
-#include <util-export.h>
+#include <util/util-export.h>
 
 /**
 * Provides an API to stream into OutputDebugString.
