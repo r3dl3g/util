@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-project("util" LANGUAGES CXX VERSION 1.0.6)
-
-# see: http://stackoverflow.com/questions/23684789/cmake-build-multiple-executables-in-one-project-with-static-library
+project("util" LANGUAGES CXX VERSION 1.0.7)
 
 include (GenerateExportHeader)
 include (CMakePackageConfigHelpers)
@@ -26,6 +24,7 @@ set(UTIL_VERSION "${PROJECT_VERSION}")
 option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
 option(UTIL_CONFIG_INSTALL "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
 option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
+option(UTIL_TESTS "On to build the tests. Default Off" OFF)
 
 function(DebugPrint MSG)
   if(VERBOSE)
@@ -190,48 +189,54 @@ if(NOT TARGET util)
     set(UTIL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/cmake/util)
 
     target_include_directories(util
-                               PUBLIC
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-                               "$<INSTALL_INTERFACE:${UTIL_INSTALL_INCLUDEDIR}>"
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${UTIL_INSTALL_INCLUDEDIR}>
     )
 
-    write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake
-                                     VERSION ${UTIL_VERSION}
-                                     COMPATIBILITY SameMajorVersion)
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake
+        VERSION ${UTIL_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
 
-    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-                                  "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
-                                  INSTALL_DESTINATION ${UTIL_INSTALL_LIBDIR}
-                                  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+    configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake
+        INSTALL_DESTINATION ${UTIL_INSTALL_LIBDIR}
+        PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+    )
 
     install(TARGETS util
-            EXPORT utilTargets
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            INCLUDES DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
+        EXPORT utilTargets
+        INCLUDES DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
     )
 
-    install(FILES ${INCLUDE_FILES}
-            ${PROJECT_BINARY_DIR}/util/util-export.h
-            ${PROJECT_BINARY_DIR}/util/util_version.h
-            LICENSE
-            DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
+    install(FILES
+        ${INCLUDE_FILES}
+        ${PROJECT_BINARY_DIR}/util/util-export.h
+        ${PROJECT_BINARY_DIR}/util/util_version.h
+        LICENSE
+        DESTINATION ${UTIL_INSTALL_INCLUDEDIR}
     )
 
     install(EXPORT utilTargets
-            FILE utilTargets.cmake
-            NAMESPACE util::
-            DESTINATION ${UTIL_INSTALL_LIBDIR}
+        FILE utilTargets.cmake
+        NAMESPACE util::
+        DESTINATION ${UTIL_INSTALL_LIBDIR}
     )
 
     export(TARGETS util FILE utilTargets.cmake)
 
     install(FILES
-            "${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake"
-            "${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake"
-            DESTINATION ${UTIL_INSTALL_LIBDIR})
+        ${CMAKE_CURRENT_BINARY_DIR}/utilConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/utilConfigVersion.cmake
+        DESTINATION ${UTIL_INSTALL_LIBDIR})
 
+  endif()
+
+  if(UTIL_TESTS)
+    add_subdirectory(tests)
   endif()
 
 endif()
