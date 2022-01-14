@@ -253,6 +253,13 @@ namespace util {
         return stop();
       }
 
+      template<typename P>
+      static inline duration run (P p) {
+        chronometer c;
+        p();
+        return c.stop();
+      }
+
     private:
       time_point begin;
     };
@@ -282,7 +289,11 @@ namespace util {
       }
 
       inline chronometer::duration average_duration () const {
-        return duration_ / count_;
+        if (count_ != 0) {
+          return duration_ / count_;
+        } else {
+          return duration_;
+        }
       }
 
       inline chronometer::duration cumulated_duration () const {
