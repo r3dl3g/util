@@ -193,7 +193,7 @@ namespace util {
 
       template<typename T>
       inline T to (const std::string& s) {
-        T t = T();
+        T t = {};
         std::istringstream(s) >> t;
         return t;
       }
