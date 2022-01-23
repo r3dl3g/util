@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-project("util" LANGUAGES CXX VERSION 1.0.7)
+project("util" LANGUAGES CXX VERSION 1.1.0)
 
 include (GenerateExportHeader)
 include (CMakePackageConfigHelpers)
@@ -138,18 +138,19 @@ if(NOT TARGET util)
     blocking_queue.h
     command_line.h
     csv_reader.h
+    currency.h
+    fs_util.h
+    math_util.h
     ostreamfmt.h
     ostream_resetter.h
     robbery.h
     sort_order.h
     string_util.h
     sys_fs.h
-    fs_util.h
     time_util.h
     tuple_util.h
     variadic_util.h
     vector_util.h
-    currency.h
   )
 
   if(NOT ANDROID)

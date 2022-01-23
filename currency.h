@@ -20,8 +20,8 @@
 //
 // Project includes
 //
-#include "string_util.h"
-#include "math_util.h"
+#include <util/string_util.h>
+#include <util/math_util.h>
 
 namespace util {
 
