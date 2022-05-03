@@ -50,8 +50,11 @@ namespace util {
     UTIL_EXPORT std::tm mktm (int year = 0, int month = 0, int day = 0,
                               int hour = 0, int minute = 0, int second = 0, int isdst = -1);
 
-    UTIL_EXPORT std::tm time_t2tm (std::time_t now);
-    UTIL_EXPORT std::tm time_t2utc (std::time_t now);
+    UTIL_EXPORT std::tm time_t2tm (std::time_t);
+    UTIL_EXPORT std::tm time_t2utc (std::time_t);
+
+    UTIL_EXPORT time_point time_t2time_point (std::time_t);
+    UTIL_EXPORT std::time_t time_point2time_t (time_point);
 
     UTIL_EXPORT std::time_t get_local_time_offset ();
 
@@ -165,13 +168,13 @@ namespace util {
                                                const char* year_delem = "-",
                                                const char* separator = " ",
                                                const char* time_delem = ":",
-                                               bool add_millis = false);
+                                               bool add_micros = false);
 
     UTIL_EXPORT std::string format_datetime (time_point const& tp,
                                              const char* year_delem = "-",
                                              const char* separator = " ",
                                              const char* time_delem = ":",
-                                             bool add_millis = false);
+                                             bool add_micros = false);
 
     // --------------------------------------------------------------------------
 #if (USE_FILE_TIME_POINT)
@@ -179,18 +182,30 @@ namespace util {
                                              const char* year_delem = "-",
                                              const char* separator = " ",
                                              const char* time_delem = ":",
-                                             bool add_millis = false);
+                                             bool add_micros = false);
 #endif
 
     UTIL_EXPORT time_point parse_datetime (const std::string& s);
     UTIL_EXPORT time_point parse_datetime (std::istream& in);
 
     // --------------------------------------------------------------------------
+    struct duration_parts {
+      int hours;
+      int mins;
+      int secs;
+      int micros;
+    };
+
+    // --------------------------------------------------------------------------
+    duration_parts duration2parts (duration const&);
+    duration parts2duration (const duration_parts&);
+
+    // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_duration (std::ostream&,
                                                duration const& d,
                                                const char* separator = " ",
                                                const char* time_delem = ":",
-                                               bool add_millis = false,
+                                               bool add_micros = false,
                                                bool minimize = false);
 
     UTIL_EXPORT std::ostream& format_duration_mt (std::ostream& out,
@@ -198,31 +213,31 @@ namespace util {
                                                   int hours_per_mt = 8,
                                                   const char* separator = " ",
                                                   const char* time_delem = ":",
-                                                  bool add_millis = false,
+                                                  bool add_micros = false,
                                                   bool minimize = false);
 
     UTIL_EXPORT std::ostream& format_duration_only_h (std::ostream& out,
                                                       duration const& d,
                                                       const char* time_delem = ":",
-                                                      bool add_millis = false,
+                                                      bool add_micros = false,
                                                       bool minimize = false);
 
     UTIL_EXPORT std::string format_duration (duration const& d,
                                              const char* separator = " ",
                                              const char* time_delem = ":",
-                                             bool add_millis = false,
+                                             bool add_micros = false,
                                              bool minimize = false);
 
     UTIL_EXPORT std::string format_duration_mt (duration const& d,
                                                 int hours_per_mt = 8,
                                                 const char* separator = " ",
                                                 const char* time_delem = ":",
-                                                bool add_millis = false,
+                                                bool add_micros = false,
                                                 bool minimize = false);
 
     UTIL_EXPORT std::string format_duration_only_h (duration const& d,
                                                     const char* time_delem = ":",
-                                                    bool add_millis = false,
+                                                    bool add_micros = false,
                                                     bool minimize = false);
 
     UTIL_EXPORT duration parse_duration (const std::string& s);
