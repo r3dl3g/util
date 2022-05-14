@@ -197,8 +197,8 @@ namespace util {
     };
 
     // --------------------------------------------------------------------------
-    duration_parts duration2parts (duration const&);
-    duration parts2duration (const duration_parts&);
+    UTIL_EXPORT duration_parts duration2parts (duration const&);
+    UTIL_EXPORT duration parts2duration (const duration_parts&);
 
     // --------------------------------------------------------------------------
     UTIL_EXPORT std::ostream& format_duration (std::ostream&,
