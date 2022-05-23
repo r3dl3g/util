@@ -30,20 +30,25 @@ namespace util {
   // precision
   template<uint32_t SYM, int N = 2, int D = math::pow10<N>()>
   struct currency {
-    inline currency (int64_t full = 0)
+
+    inline currency ()
+      :full_(0)
+    {}
+
+    template <typename Integer,
+              typename std::enable_if<std::is_integral<Integer>::value, bool>::type = true>
+    constexpr currency (Integer full)
       :full_(full)
     {}
 
-    inline currency (int64_t e, int64_t c)
+    template <typename Floating,
+              typename std::enable_if<std::is_floating_point<Floating>::value, bool>::type = true>
+    constexpr currency (Floating d)
+      : full_(static_cast<long>(d * D))
+    {}
+
+    constexpr currency (int64_t e, int64_t c)
       : full_(e * D + c)
-    {}
-
-    inline constexpr currency (long double d)
-      : full_(static_cast<long>(d * D))
-    {}
-
-    inline constexpr currency (double d)
-      : full_(static_cast<long>(d * D))
     {}
 
     inline constexpr uint32_t symbol () const {
@@ -58,32 +63,39 @@ namespace util {
       return full_ == rhs.full_;
     }
 
-    inline currency operator* (int64_t f) const {
-      return {full_ * f};
+    inline bool operator!= (const currency& rhs) const {
+      return full_ != rhs.full_;
     }
 
-    inline currency operator* (int32_t f) const {
-      return {full_ * f};
+    inline currency operator- () const {
+      return {-full_};
     }
 
-    inline currency operator/ (int64_t f) const {
-      return {full_ / f};
+    template <typename T>
+    inline currency operator* (T f) const {
+      return {static_cast<int64_t>(full_ * f)};
     }
 
-    inline currency operator/ (int32_t f) const {
-      return {full_ / f};
+    template <typename T>
+    inline currency operator/ (T f) const {
+      return {static_cast<int64_t>(full_ / f)};
     }
 
-    inline currency operator* (double f) const {
-      return {as_real() * f};
+    inline currency operator+ (const currency& rhs) {
+      return {full_ + rhs.full_};
     }
 
-    inline currency operator/ (double f) const {
-      return {as_real() / f};
+    inline currency operator- (const currency& rhs) {
+      return {full_ - rhs.full_};
     }
 
     inline currency& operator+= (const currency& rhs) {
       full_ += rhs.full_;
+      return *this;
+    }
+
+    inline currency& operator-= (const currency& rhs) {
+      full_ -= rhs.full_;
       return *this;
     }
 
@@ -152,15 +164,15 @@ namespace util {
 
   namespace literals {
 
-    constexpr currency<0> operator "" _CUR(long double v) { return {v}; }
-    constexpr Euro operator "" _EUR(long double v)        { return {v}; }
-    constexpr Dollar operator "" _USD(long double v)      { return {v}; }
-    constexpr Pound operator "" _GBP(long double v)       { return {v}; }
-    constexpr Yen operator "" _JPY(long double v)         { return {v}; }
-    constexpr Yuan operator "" _CNY(long double v)        { return {v}; }
-    constexpr Rupee operator "" _INR(long double v)       { return {v}; }
-    constexpr Ruble operator "" _RUB(long double v)       { return {v}; }
-    constexpr Won operator "" _KRW(long double v)         { return {v}; }
+    constexpr currency<0> operator "" _CUR(long double v) { return currency<0>{v}; }
+    constexpr Euro operator "" _EUR(long double v)        { return Euro{v}; }
+    constexpr Dollar operator "" _USD(long double v)      { return Dollar{v}; }
+    constexpr Pound operator "" _GBP(long double v)       { return Pound{v}; }
+    constexpr Yen operator "" _JPY(long double v)         { return Yen{v}; }
+    constexpr Yuan operator "" _CNY(long double v)        { return Yuan{v}; }
+    constexpr Rupee operator "" _INR(long double v)       { return Rupee{v}; }
+    constexpr Ruble operator "" _RUB(long double v)       { return Ruble{v}; }
+    constexpr Won operator "" _KRW(long double v)         { return Won{v}; }
 
   }
 
@@ -198,5 +210,11 @@ namespace util {
     return c;
   }
 
-
 } // util
+
+namespace std {
+
+  template<uint32_t SYM, int N, int D>
+  struct is_arithmetic<util::currency<SYM, N, D>> : public true_type {};
+
+}
