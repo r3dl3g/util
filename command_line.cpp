@@ -33,7 +33,7 @@ namespace util {
 
   namespace command_line {
 
-    parser::parser (const std::string& app_name, std::initializer_list<arg> args)
+    parser::parser (const std::string& app_name, const std::vector<arg>& args)
       : app_name(app_name)
       , commands(args)
     {
@@ -45,8 +45,8 @@ namespace util {
       );
     }
 
-    void parser::add (std::initializer_list<arg> args) {
-      commands.insert(commands.end(), args);
+    void parser::add (const std::vector<arg>& args) {
+      commands.insert(commands.end(), args.begin(), args.end());
     }
 
     void parser::add (arg&& a) {
