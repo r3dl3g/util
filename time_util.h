@@ -197,6 +197,9 @@ namespace util {
     };
 
     // --------------------------------------------------------------------------
+    UTIL_EXPORT duration mkduration (int hours = 0, int mins = 0, int secs = 0, int mcrsecs = 0);
+
+    // --------------------------------------------------------------------------
     UTIL_EXPORT duration_parts duration2parts (duration const&);
     UTIL_EXPORT duration parts2duration (const duration_parts&);
 

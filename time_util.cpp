@@ -364,6 +364,11 @@ namespace util {
     }
 
     // --------------------------------------------------------------------------
+    duration mkduration (int hours, int mins, int secs, int mcrsecs) {
+      return std::chrono::hours(hours) + std::chrono::minutes(mins) + std::chrono::seconds(secs) + std::chrono::microseconds(mcrsecs);
+    }
+
+    // --------------------------------------------------------------------------
     duration_parts duration2parts (duration const& d) {
       using namespace std::chrono;
       const auto hrs = duration_cast<hours>(d);
