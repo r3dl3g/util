@@ -162,7 +162,7 @@ namespace util {
 
 #endif // _MSVC
 
-  namespace literals {
+  namespace currency_literals {
 
     constexpr currency<0> operator "" _CUR(long double v) { return currency<0>{v}; }
     constexpr Euro operator "" _EUR(long double v)        { return Euro{v}; }
