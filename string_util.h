@@ -32,7 +32,7 @@
 // Library includes
 //
 #include <util/ostreamfmt.h>
-#include <util-export.h>
+#include <util/util-export.h>
 
 /**
 * Provides an API to stream into OutputDebugString.
@@ -193,7 +193,7 @@ namespace util {
 
       template<typename T>
       inline T to (const std::string& s) {
-        T t = T();
+        T t = {};
         std::istringstream(s) >> t;
         return t;
       }

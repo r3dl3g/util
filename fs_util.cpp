@@ -80,7 +80,7 @@ namespace util {
 
     int open_document (const sys_fs::path& f) {
 #ifdef WIN32
-      return reinterpret_cast<int>(ShellExecuteW(NULL, L"open", f.c_str(), nullptr, nullptr, SW_SHOWNORMAL));
+      return 0 != ShellExecuteW(NULL, L"open", f.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #else
       return std::system(("xdg-open \"" + f.string() + "\"").c_str());
 #endif

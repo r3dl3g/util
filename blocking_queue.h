@@ -189,6 +189,12 @@ namespace util {
       return m_queue.empty();
     }
 
+    /// @return size of the queue.
+    std::size_t size () const {
+      std::unique_lock<std::mutex> lock(m_mutex);
+      return m_queue.size();
+    }
+
     /// Removes all items from the queue.
     void clear () {
       std::unique_lock<std::mutex> lock(m_mutex);

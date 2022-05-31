@@ -46,9 +46,9 @@ namespace util {
       typedef std::vector<std::string> arg_list;
       typedef arg_list::const_iterator iterator;
 
-      explicit parser (const std::string& app_name = {}, std::initializer_list<arg> args = {});
+      explicit parser (const std::string& app_name = {}, const std::vector<arg>& args = {});
 
-      void add (std::initializer_list<arg> args);
+      void add (const std::vector<arg>& args);
       void add (arg&& a);
 
       void process (int argc, const char* argv[]);

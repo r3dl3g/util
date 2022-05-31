@@ -29,7 +29,7 @@
 // Library includes
 //
 #include <util/string_util.h>
-#include <util-export.h>
+#include <util/util-export.h>
 
 
 namespace util {
