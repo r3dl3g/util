@@ -37,14 +37,24 @@ namespace util {
   namespace fs {
 
     sys_fs::path get_user_home () {
-      char const* home = getenv("HOME");
-      if (home || ((home = getenv("USERPROFILE")))) {
+      std::size_t len;
+      char home[255] = {};
+      getenv_s(&len, home, 255, "HOME");
+      if (len) {
         return {home};
       } else {
-        char const* hdrive = getenv("HOMEDRIVE");
-        char const* hpath = getenv("HOMEPATH");
-        if (hdrive && hpath) {
-          return sys_fs::path(hdrive) / hpath;
+        getenv_s(&len, home, 255, "USERPROFILE");
+        if (len) {
+          return {home};
+        } else {
+          getenv_s(&len, home, 255, "HOMEDRIVE");
+          if (len) {
+            home[len] = std::filesystem::path::preferred_separator;
+            getenv_s(&len, home + len + 1, 254 - len, "HOMEPATH");
+            if (len) {
+              return { home };
+            }
+          }
         }
       }
       return {"."};
