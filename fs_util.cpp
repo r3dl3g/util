@@ -21,6 +21,8 @@
 #ifdef WIN32
 #include <windows.h>
 #include <shellapi.h>
+#else
+#include <cstring>
 #endif
 
 
@@ -35,6 +37,19 @@
 namespace util {
 
   namespace fs {
+
+#ifndef WIN32
+    void getenv_s (std::size_t* len, char* buffer, std::size_t max_len, char const* name) {
+      const char* value = getenv(name);
+      if (value) {
+        std::strncpy(buffer, value, max_len);
+        *len = std::strlen(buffer);
+      } else {
+        *len = 0;
+        buffer[0] = 0;
+      }
+    }
+#endif
 
     sys_fs::path get_user_home () {
       std::size_t len;
