@@ -24,7 +24,7 @@
 //
 // Library includes
 //
-#include <iostream>
+#include <istream>
 #include <locale>
 #include <codecvt>
 #include <algorithm>

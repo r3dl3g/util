@@ -232,7 +232,7 @@ namespace util {
                   + system_clock::now());
       const auto tse = system_clock::to_time_t(sctp);
       const time_point tp = time_point(time_point::duration(tse));
-# elif _MSVC_LANG < 20173L
+# elif _MSC_VER < 1917
       const auto tse = ftp.time_since_epoch().count() - __std_fs_file_time_epoch_adjustment;
       const time_point tp = time_point(time_point::duration(tse));
 # else

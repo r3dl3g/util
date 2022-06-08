@@ -189,7 +189,7 @@ namespace util {
   template<uint32_t SYM, int N, int D>
   inline std::istream& operator>> (std::istream& in, currency<SYM, N, D>& m) {
     // std::isdigit(in.peek(), in.getloc()) crashes with bad_cast exception
-    while (in.good() && !std::isdigit(in.peek()) && (in.peek() != '-')) {
+    while (in.good() && !/*std::*/isdigit(in.peek()) && (in.peek() != '-')) {
       in.ignore();
     }
     double v = 0;

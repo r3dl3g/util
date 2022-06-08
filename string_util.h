@@ -21,10 +21,9 @@
 // Common includes
 //
 #include <string>
-#include <vector>
-#include <iterator>
-#include <sstream>
 #include <iomanip>
+#include <iterator>
+#include <vector>
 
 
 // --------------------------------------------------------------------------
@@ -33,6 +32,7 @@
 //
 #include <util/ostreamfmt.h>
 #include <util/util-export.h>
+
 
 /**
 * Provides an API to stream into OutputDebugString.
@@ -221,28 +221,54 @@ namespace util {
     namespace literals {
 
       constexpr uint32_t operator "" _UTF8(const char* utf8, std::size_t i) {
+#if defined(WIN32) && (_MSC_VER < 1901)
+        typedef unsigned char uc;
+        return static_cast<uc>(utf8[0]) |
+          (i > 0 ? static_cast<uc>(utf8[1]) << 8 : 0) |
+          (i > 1 ? static_cast<uc>(utf8[2]) << 16 : 0) |
+          (i > 2 ? static_cast<uc>(utf8[3]) << 24 : 0);
+#else
         uint32_t w = static_cast<unsigned char>(utf8[0]);
         for (int n = 1; n < i; ++n) {
           w |= static_cast<unsigned char>(utf8[n]) << (8 * n);
         }
         return w;
       }
+#endif // _MSC_VER
 
     }
 
     // helper class to keep a char array with defined size
     template<std::size_t N>
     struct utf8_buffer {
-      char buffer[N] = {0};
+      char buffer[N];
+      constexpr utf8_buffer (char const utf8[N] = { 0 }) {
+        memcpy(buffer, utf8, N);
+      }
     };
+
+    namespace detail {
+      union uint_utf8_union {
+        uint32_t wc;
+        utf8_buffer<5> cp;
+      };
+      union utf8_uint_union {
+        utf8_buffer<5> cp;
+        uint32_t wc;
+        constexpr utf8_uint_union (char const utf8[5])
+          : cp(utf8)
+        {}
+      };
+    }
+
+    // convert an utf-8 character code point sequence to an uitn32
+    constexpr uint32_t utf8_to_uint32 (char const* utf8) {
+      return detail::utf8_uint_union(utf8).wc;
+    }
 
     // reconvert an uitn32 to an utf-8 character code point sequence
     constexpr utf8_buffer<5> uint32_to_utf8 (uint32_t wc) {
-      union {
-        uint32_t wc;
-        utf8_buffer<5> cp;
-      } u = {wc};
-      return {u.cp};
+      return detail::uint_utf8_union{wc}.cp;
     }
 
   } // namespace utf8
