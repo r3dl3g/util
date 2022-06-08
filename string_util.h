@@ -20,6 +20,7 @@
 //
 // Common includes
 //
+#include <cstring>
 #include <string>
 #include <iomanip>
 #include <iterator>
@@ -243,7 +244,7 @@ namespace util {
     struct utf8_buffer {
       char buffer[N];
       constexpr utf8_buffer (char const utf8[N] = { 0 }) {
-        memcpy(buffer, utf8, N);
+        std::memcpy(buffer, utf8, N);
       }
     };
 
