@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-project("util" LANGUAGES CXX VERSION 1.1.5)
+file(READ "derivation.nix" derivation_ver)
+string(REGEX MATCH "version = \"([0-9\.]+)\"" _ ${derivation_ver})
+set(project_version ${CMAKE_MATCH_1})
+
+message("Building util version: ${project_version}")
+
+project("util" LANGUAGES CXX VERSION ${project_version})
 
 include (GenerateExportHeader)
 include (CMakePackageConfigHelpers)
