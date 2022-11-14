@@ -23,11 +23,9 @@ stdenv.mkDerivation {
   doCheck = true;
 
   checkPhase = ''
-    pushd tests
-    echo WorkingDir: $PWD
-    echo ls -la
+    cd tests
     ctest .
-    popd
+    cd ..
   '';
 
   meta = with lib; {
