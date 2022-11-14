@@ -10,6 +10,7 @@ enable_testing()
 
 set(tests
     csv_test
+    fs_test
 )
 
 add_definitions(${UTIL_CXX_FLAGS})

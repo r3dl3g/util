@@ -37,6 +37,13 @@ namespace util {
 
     UTIL_EXPORT int execute_or_open (const sys_fs::path&);
 
+    struct UTIL_EXPORT command_result {
+      int exit_code;
+      std::string output;
+    };
+
+    UTIL_EXPORT command_result command (const sys_fs::path&);
+
   } // namespace fs
 
 } // namespace util

@@ -4,7 +4,7 @@
 
 stdenv.mkDerivation {
   pname = "util";
-  version = "1.1.6";
+  version = "1.1.7";
 
   src = ./.;
 
@@ -12,12 +12,23 @@ stdenv.mkDerivation {
 
   enableParallelBuilding = true;
 
-  outputs = [ "out" "dev" ];
+  outputs = [ "dev" "out" ];
 
   cmakeFlags = [
     "-DUTIL_CONFIG_INSTALL=ON"
-    "-DUTIL_BUILD_STATIC_MODULE_LIB=OFF"
+    "-DUTIL_BUILD_STATIC_MODULE_LIB=ON"
+    "-DUTIL_TESTS=ON"
   ];
+
+  doCheck = true;
+
+  checkPhase = ''
+    pushd tests
+    echo WorkingDir: $PWD
+    echo ls -la
+    ctest .
+    popd
+  '';
 
   meta = with lib; {
     description = "A c++ utility library";

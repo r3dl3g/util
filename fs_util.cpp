@@ -105,6 +105,36 @@ namespace util {
       return is_executable(f) ? execute(f) : open_document(f);
     }
 
+    // @see: https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html
+    command_result command (const sys_fs::path& f) {
+        command_result result { 255, "" };
+        std::array<char, 0xffff> buffer {};
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#define WEXITSTATUS
+#endif
+#ifdef WIN32
+        FILE *pipe = popen(util::string::utf16_to_utf8(f.c_str()).c_str(), "r");
+#else
+        FILE *pipe = popen(f.c_str(), "r");
+#endif
+        if (pipe == nullptr) {
+            throw std::runtime_error("popen() failed!");
+        }
+        try {
+            std::size_t bytesread;
+            while ((bytesread = fread(buffer.data(), sizeof(buffer.at(0)), sizeof(buffer), pipe)) != 0) {
+                result.output.append(buffer.data(), bytesread);
+            }
+        } catch (...) {
+            pclose(pipe);
+            throw;
+        }
+        result.exit_code = WEXITSTATUS(pclose(pipe));
+        return result;
+    }
+
   } // namespace fs
 
 } // util
