@@ -4,7 +4,7 @@
 
 stdenv.mkDerivation {
   pname = "util";
-  version = "1.1.8";
+  version = "1.1.9";
 
   src = ./.;
 

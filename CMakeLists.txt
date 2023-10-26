@@ -29,8 +29,8 @@ set(UTIL_VERSION "${PROJECT_VERSION}")
 
 option(UTIL_BUILD_STATIC_MODULE_LIB "On to build a static library for this module, Off for shared library. default On" ON)
 option(UTIL_CONFIG_INSTALL "On to make an installable standalone build, Off to build as part of a project. Default Off" OFF)
-option(UTIL_CXX_STANDARD "C++ standard to overwrite default cmake standard" ${CMAKE_CXX_STANDARD})
 option(UTIL_TESTS "On to build the tests. Default Off" OFF)
+set(UTIL_CXX_STANDARD "${CMAKE_CXX_STANDARD}" CACHE STRING "C++ standard to overwrite default cmake standard")
 
 function(DebugPrint MSG)
   if(VERBOSE)
@@ -42,7 +42,7 @@ if(NOT TARGET util)
 
   set(UTIL_LIBRARIES util::util)
 
-  if(UTIL_CXX_STANDARD STREQUAL "OFF")
+  if(UTIL_CXX_STANDARD STREQUAL "")
     set(UTIL_CXX_STANDARD 17)
   endif()
 
