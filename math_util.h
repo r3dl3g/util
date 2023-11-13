@@ -65,6 +65,28 @@ namespace util {
       return signum(x, std::is_signed<T>());
     }
 
+    // --------------------------------------------------------------------------
+    template<typename T>
+    bool is_between (T lower, T value, T upper) {
+      return static_cast<typename std::make_unsigned<T>::type>(value - lower) <= (upper - lower);
+    }
+
+    // --------------------------------------------------------------------------
+    template<typename T>
+    inline T limit (T lower, T value, T upper) {
+      #if (__cplusplus >= 201703L)
+        return std::clamp(value, lower, upper);
+      #else
+        return std::min(std::max(value, lower), upper);
+      #endif
+    }
+
+    // --------------------------------------------------------------------------
+    template<int weight, typename T>
+    inline T rolling_avg (T avarage, T score) {
+      return (avarage * (weight - 1) + score) / weight;
+    }
+
   } // namespace math
 
 } // util
