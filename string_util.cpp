@@ -14,6 +14,10 @@
  * @license   MIT license. See accompanying file LICENSE.
  */
 
+#ifdef WIN32
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#endif // WIN32
+
 // --------------------------------------------------------------------------
 //
 // Project includes
