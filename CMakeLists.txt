@@ -12,6 +12,10 @@ include (GenerateExportHeader)
 include (CMakePackageConfigHelpers)
 include (GNUInstallDirs)
 
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/obj)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
 endif()
@@ -41,10 +45,6 @@ endfunction(DebugPrint)
 if(NOT TARGET util)
 
   set(UTIL_LIBRARIES util::util)
-
-  if(UTIL_CXX_STANDARD STREQUAL "")
-    set(UTIL_CXX_STANDARD 17)
-  endif()
 
   set(UTIL_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/..
@@ -89,7 +89,7 @@ if(NOT TARGET util)
   if(WIN32)
     set(UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} -DWIN32_LEAN_AND_MEAN)
     if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") AND (MSVC_VERSION GREATER 1910))
-      set(UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} -DUSE_FILE_TIME_POINT)
+      set(UTIL_CXX_FLAGS ${UTIL_CXX_FLAGS} -DUSE_FILE_TIME_POINT "/wd4251")
     endif()
   endif()
 
@@ -177,9 +177,9 @@ if(NOT TARGET util)
   )
 
   if(UTIL_BUILD_STATIC_MODULE_LIB)
-    DebugPrint("UTIL: Create static Library")
+    message(STATUS "Build UTIL as static Library")
   else()
-    DebugPrint("UTIL: Create shared Library")
+    message(STATUS "Build UTIL as shared Library")
 
     target_link_libraries(util PRIVATE ${UTIL_SYS_LIBRARIES})
   endif()
