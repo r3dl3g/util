@@ -37,6 +37,11 @@ namespace util {
   namespace time {
 
     // --------------------------------------------------------------------------
+    time_point now () {
+      return std::chrono::system_clock::now();
+    }
+
+    // --------------------------------------------------------------------------
     std::tm mktm (int year, int month, int day, int hour, int minute, int second, int isdst) {
       return std::tm{ second, minute, hour, day, tm_mon(month), tm_year(year), 0, 0, isdst };
     }
@@ -107,7 +112,7 @@ namespace util {
     }
 
     std::tm local_time_now () {
-      return local_time(std::chrono::system_clock::now());
+      return local_time(now());
     }
 
     // --------------------------------------------------------------------------
@@ -129,7 +134,7 @@ namespace util {
     }
 
     std::tm utc_time_now () {
-      return utc_time(std::chrono::system_clock::now());
+      return utc_time(now());
     }
 
     // --------------------------------------------------------------------------
