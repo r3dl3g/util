@@ -9,7 +9,7 @@
  *
  * Project    utility lib
  *
- * @brief     iterator to use for_each with index
+ * @brief     simple 2x2 rotating matrix
  *
  * @license   MIT license. See accompanying file LICENSE.
  */
