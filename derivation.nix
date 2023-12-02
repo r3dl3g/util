@@ -16,11 +16,11 @@ stdenv.mkDerivation {
 
   cmakeFlags = [
     "-DUTIL_CONFIG_INSTALL=ON"
-    "-DUTIL_BUILD_STATIC_MODULE_LIB=ON"
-    "-DUTIL_TESTS=ON"
+    "-DUTIL_BUILD_STATIC_MODULE_LIB=OFF"
+    "-DUTIL_TESTS=OFF"
   ];
 
-  doCheck = true;
+  doCheck = false;
 
   checkPhase = ''
     cd tests

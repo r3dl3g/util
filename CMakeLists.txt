@@ -44,6 +44,10 @@ endfunction(DebugPrint)
 
 if(NOT TARGET util)
 
+  if (UTIL_CXX_STANDARD STREQUAL "")
+    set (UTIL_CXX_STANDARD 17)
+  endif ()
+
   set(UTIL_LIBRARIES util::util)
 
   set(UTIL_INCLUDE_DIRS
