@@ -150,7 +150,9 @@ if(NOT TARGET util)
     csv_reader.h
     currency.h
     fs_util.h
+    index_iterator.h
     math_util.h
+    matrix.h
     ostreamfmt.h
     ostream_resetter.h
     robbery.h
