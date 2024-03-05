@@ -126,6 +126,10 @@ namespace util {
         return remaining;
       }
 
+      inline const std::string& name () const {
+        return app_name;
+      }
+
     private:
       static void execute (const arg& cmd, const std::string& match, iterator& i, const iterator& e);
 
