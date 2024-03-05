@@ -34,6 +34,7 @@ namespace util {
 
   namespace command_line {
 
+    // -----------------------------------------------------------------------
     struct arg {
       std::string short_cmd;
       std::string long_cmd;
@@ -42,6 +43,71 @@ namespace util {
       std::function<void(std::string)> action;
     };
 
+    // -----------------------------------------------------------------------
+    struct toggle_param {
+
+      toggle_param (bool& f)
+        : flag(f)
+      {}
+      
+      void operator() (const std::string&) {
+        flag = !flag;
+      }
+
+    private:
+      bool& flag;
+    };
+
+    // -----------------------------------------------------------------------
+    inline toggle_param mk_toggle_param (bool& t) {
+      return toggle_param(t);
+    }
+
+    // -----------------------------------------------------------------------
+    template<typename T>
+    struct increment_param {
+
+      increment_param (T& f)
+        : flag(f)
+      {}
+      
+      void operator() (const std::string&) {
+        ++flag;
+      }
+
+    private:
+      T& flag;
+    };
+
+    // -----------------------------------------------------------------------
+    template<typename T>
+    inline increment_param<T> mk_increment_param (T& t) {
+      return increment_param<T>(t);
+    }
+
+    // -----------------------------------------------------------------------
+    template<typename T>
+    struct value_param {
+
+      value_param (T& f)
+        : flag(f)
+      {}
+      
+      void operator() (const std::string& s) {
+        flag = util::string::convert::to<T>(s);
+      }
+
+    private:
+      T& flag;
+    };
+
+    // -----------------------------------------------------------------------
+    template<typename T>
+    inline value_param<T> mk_value_param (T& t) {
+      return value_param<T>(t);
+    }
+
+    // -----------------------------------------------------------------------
     struct UTIL_EXPORT parser {
       typedef std::vector<std::string> arg_list;
       typedef arg_list::const_iterator iterator;
