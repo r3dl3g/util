@@ -68,7 +68,10 @@ namespace util {
     // --------------------------------------------------------------------------
     template<typename T>
     bool is_between (T lower, T value, T upper) {
+#pragma warning(push)
+#pragma warning(disable: 4018)
       return static_cast<typename std::make_unsigned<T>::type>(value - lower) <= (upper - lower);
+#pragma warning(pop)
     }
 
     // --------------------------------------------------------------------------

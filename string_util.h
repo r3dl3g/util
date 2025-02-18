@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <iterator>
 #include <vector>
+#include <cstdint>
 
 
 // --------------------------------------------------------------------------
@@ -95,7 +96,7 @@ namespace util {
     // trim both ends
     UTIL_EXPORT void trim (std::string& s);
     UTIL_EXPORT std::string trimed (std::string s);
-    
+
     // replace sequence in string
     UTIL_EXPORT void replace (std::string& s, const std::string& from, const std::string& to);
     UTIL_EXPORT void replace (std::string& s, const char* from, const char* to);

@@ -67,37 +67,40 @@ namespace util {
     std::size_t max_y;
   };
 
-  template<class ExecutionPolicy, typename F>
+  template<class ExecutionPolicy, typename T, typename F>
   void matrix_iterate (ExecutionPolicy&& exec,
-                      int xmin, int xmax,
-                      int ymin, int ymax,
+                      T xmin, T xmax,
+                      T ymin, T ymax,
                       F fn) {
-    const std::size_t l_size = xmax - xmin;
-    const std::size_t r_size = ymax - ymin;
+    const T l_size = std::max<T>(xmax - xmin, 0);
+    const T r_size = std::max<T>(ymax - ymin, 0);
     std::for_each(std::forward<ExecutionPolicy>(exec),
-                  util::index_iterator(0),
-                  util::index_iterator(l_size * r_size),
-                  [&] (std::size_t i) {
-      const std::size_t x = xmin + (i % l_size);
-      const std::size_t y = ymin + (i / l_size);
+                  util::index_iterator<T>(0),
+                  util::index_iterator<T>(l_size * r_size),
+                  [&] (T i) {
+      const T x = xmin + (i % l_size);
+      const T y = ymin + (i / l_size);
       fn(x, y);
     });
   }
 
-  template<typename F>
-  bool matrix_traverse (int xmin, int xmax,
-                        int ymin, int ymax,
+  template<typename T, typename F>
+  bool matrix_traverse (T xmin, T xmax,
+                        T ymin, T ymax,
                         F fn) {
-    for (int x = xmin; x < xmax; ++x) {
-      for (int l = x, r = ymin; (l >= xmin) && (r < ymax); --l, ++r) {
-        if (!fn(l, r)) {
+    using S = std::make_signed_t<T>;
+    for (T x = xmin; x < xmax; ++x) {
+      T r = ymin;
+      for (S l = x; (l >= static_cast<S>(xmin)) && (r < ymax); --l, ++r) {
+        if (!fn(static_cast<T>(l), r)) {
           return false;
         }
       }
     }
-    for (int y = ymin + 1; y < ymax; ++y) {
-      for (int l = xmax - 1, r = y; (l >= xmin) && (r < ymax); --l, ++r) {
-        if (!fn(l, r)) {
+    for (T y = ymin + 1; y < ymax; ++y) {
+      T r = y;
+      for (S l = xmax - 1; (l >= static_cast<S>(xmin)) && (r < ymax); --l, ++r) {
+        if (!fn(static_cast<T>(l), r)) {
           return false;
         }
       }

@@ -30,15 +30,16 @@ namespace util {
   //
   // helper to use for_each with std::execution::par_unseq with indices
   //
+  template<typename T = std::size_t>
   struct index_iterator {
 
     using iterator_category = std::random_access_iterator_tag;
-    using difference_type   = std::size_t;
-    using value_type        = std::size_t;
-    using pointer           = value_type;
-    using reference         = value_type;
+    using value_type        = T;
+    using difference_type   = T;
+    using pointer           = T;
+    using reference         = T;
     
-    index_iterator (std::size_t i = 0)
+    index_iterator (value_type i = 0)
       : value(i)
     {}
 
@@ -111,7 +112,7 @@ namespace util {
     }
 
   private:
-    std::size_t value;
+    value_type value;
   };
 
 } // util
